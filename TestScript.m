@@ -11,14 +11,17 @@ if any((testRunInfo.s915LattDepths<1)&(testRunInfo.s915LattDepths>0))
     disp('yo')
 end
 
-testTable = testRunInfo.conditionalConstructionTable({'s915LattDepths','0-0.01,0.04','RunFolder','16'});
+testTable = testRunInfo.conditionalConstructionTable({'s915LattDepths','0to0.01','RunFolder','16'});
 
-testStruct = testRunInfo.conditionalInfo({'s915LattDepths','0-0.01,0.04','RunFolder','16788'});
+testStruct = testRunInfo.conditionalInfo({'s915LattDepths','0to0.01','RunFolder','16788'});
 
 reGenRunInfo = RunInfo(testTable,citadelDir);
 
-
-thing = split('123,342-400,5452',',');
-split(thing{2},'-')
+nonZeroSub = testRunInfo.checkForNonZeroSubset({'s915LattDepths','0.008','RunFolder','16'});
 
 
+testSubRun = RunInfoSubset(testRunInfo,{'s915LattDepths','0to0.01','RunFolder','16'});
+
+array = {testRunInfo,testSubRun};
+
+% testRunData = RunData(testRunInfo);

@@ -82,6 +82,25 @@ classdef RunInfo
             outFlag = checkForEmptyElem(obj);
         end
         
+        function nonZeroSub = checkForNonZeroSubset(obj,conditionsCellArray)
+            %Returns 1 if the conditions given are satisfied by at least
+            %one atomcloud in the dataset.  (Note, assumes that only one 
+            %variable was changed each run.)
+            numConditions = length(conditionsCellArray)/2;
+            for ii=1:numConditions
+                var = conditionsCellArray{2*ii-1};
+                condition = conditionsCellArray{2*ii};  
+                
+                satisfiers = checkCondition(obj,var,condition);
+                
+                if isempty(satisfiers)
+                    nonZeroSub = false;
+                    return
+                end
+            end
+            nonZeroSub = true;
+        end
+        
         function outputStruct = conditionalInfo(obj,conditionsCellArray)
             %Generates a struct of the properties that satisfy the
             %conditions given.
@@ -101,14 +120,15 @@ classdef RunInfo
             %    which values in 0,1000,10000 are present in the
             %    information.)
             %    
-            %    Numeric conditions can also have inclusive ranges separated by '-'.  
-            %    (e.g. {'LatticeHoldTime','0-1000'} will check for lattice hold
-            %    times in the range 0 to 1000.
+            %    Numeric conditions can also have inclusive ranges separated by 'to'.  
+            %    (e.g. {'LatticeHoldTime','0to1000'} will check for lattice hold
+            %    times in the range 0 to 1000. 
             %
             %    Numeric conditions can be a combination of the above two
             %    specifiers, with ranges and values separated by commas 
-            %    (e.g. {'LatticeHoldTime','0-1000,10000,15000-20000'})
-                        % Iterating through the conditions and checking which elements
+            %    (e.g. {'LatticeHoldTime','0to1000,10000,15000to20000'})
+            
+            % Iterating through the conditions and checking which elements
             % satisfy the conditions
             numConditions = length(conditionsCellArray)/2;
             for ii=1:numConditions
@@ -143,13 +163,13 @@ classdef RunInfo
             %    which values in 0,1000,10000 are present in the
             %    information.)
             %    
-            %    Numeric conditions can also have inclusive ranges separated by '-'.  
-            %    (e.g. {'LatticeHoldTime','0-1000'} will check for lattice hold
-            %    times in the range 0 to 1000.
+            %    Numeric conditions can also have inclusive ranges separated by 'to'.  
+            %    (e.g. {'LatticeHoldTime','0to1000'} will check for lattice hold
+            %    times in the range 0 to 1000. 
             %
             %    Numeric conditions can be a combination of the above two
             %    specifiers, with ranges and values separated by commas 
-            %    (e.g. {'LatticeHoldTime','0-1000,10000,15000-20000'})
+            %    (e.g. {'LatticeHoldTime','0to1000,10000,15000to20000'})
             
             %Check length(conditionsCellArray) is a multiple of 2
             assert(mod(length(conditionsCellArray),2)==0,...
@@ -207,7 +227,12 @@ function out = tabUnpackNum(tabElem)
     if iscell(tabElem)
         tabElem = tabElem{1};
     end
-    out = str2double(split(tabElem,';'));
+    if isempty(tabElem)
+        out = [];
+        disp('EMPTY ELEM')
+    else
+        out = str2double(split(tabElem,';'));
+    end
 end
 
 function [filePath] = makeFilePath(citadelDir,year,month,day,runFolder)
@@ -284,14 +309,14 @@ function out = checkCondition(obj,var,condition)
         %Parse condition
         commaSplit = split(condition,',');
         for jj=1:length(commaSplit)
-            assert(count(commaSplit{jj},'-')<2,'Conditions must only contain at most one - symbol to represent range')
-            if count(commaSplit{jj},'-')==1
+            assert(count(commaSplit{jj},'to')<2,'Conditions must only contain at most one ''to'' to represent range.  Separate conditions must be separated by commas')
+            if count(commaSplit{jj},'to')==1
                 %A range condition
-                rangeCond=split(commaSplit{jj},'-');
+                rangeCond=split(commaSplit{jj},'to');
                 lowerBound=str2double(rangeCond{1});
                 upperBound=str2double(rangeCond{2});
 
-                assert(lowerBound<=upperBound,'Range conditions must be expressed ''LowerBound-UpperBound'' ')
+                assert(lowerBound<=upperBound,'Range conditions must be expressed ''<LowerBound>to<UpperBound>'' ')
 
                 satisVals = runVals(runVals>=lowerBound & runVals<=upperBound);
             else
