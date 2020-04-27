@@ -13,14 +13,12 @@ classdef RunInfo
         RunFolder %Folder title
         RunNumber %Char number
        
+        Year
         Month 
         Day    
         
-        p1064LattDepths %Vector of numerical values
-        s915LattDepths  %Vector of numerical values
-        LatticeHoldTimes   %Vector of numerical values
-        
-        KDCal915         %double
+        vars
+        ncVars %Non cicero vars
         
         Comments
         
@@ -28,19 +26,40 @@ classdef RunInfo
     end
     
     methods
-        function obj = RunInfo(CSVTableLine,citadelDir)
+        function obj = RunInfo(CSVTableLine,citadelDir,ncVars)
             %Populates the properties from the input one row table
             %CSVTableLine that is expected to be generated from a readtable
             %command acted on a csv file.  Assumes that readtable has been
             %used to make all outputs cellarrays with strings.  Multiple
             %values should be separated with ; in the original csv (e.g. for multple depts)
             %Example call CSVTableLine = readtable('RunInfoTable.csv','Format',repmat('%s',[1,10]),'TextType','char','Delimiter',',')
-
+            %
+            %   ncVars are an optional input cell array of variables that
+            %   are not stored by cicero.  It is of the form {'var1','var2',...}
+            %   The strings in ncVars should be elements of the table CSVTableLine
+            
+            if nargin==0
+                tableElements = {'Year','Month','Day','SeriesID','RunType','RunFolder','Comments'};
+                CSVTableLine=table('Size',size(tableElements),...
+                    'VariableType',repelem({'cellstr'},length(tableElements)),...
+                    'VariableNames',tableElements);
+                citadelDir='';
+                ncVars={};
+            end
+            if nargin<3
+                ncVars={};
+            end
             obj.CitadelDir = citadelDir;
             obj.emptyElementFlag=0;
             
             
             % Direct loading of properties provided in csv file
+            if any(strcmp(CSVTableLine.Properties.VariableNames,'Year'))
+                obj.Year = tabUnpackNum(CSVTableLine.Year);
+            else
+                warning('No year specified.  Assuming current year.')
+                obj.Year = num2str(datetime('now').Year);
+            end
             obj.Month = tabUnpackNum(CSVTableLine.Month);
             obj.Day = tabUnpackNum(CSVTableLine.Day);
             
@@ -49,11 +68,22 @@ classdef RunInfo
             
             obj.RunFolder = tabUnpackChar(CSVTableLine.RunFolder);
             
-            obj.p1064LattDepths = tabUnpackNum(CSVTableLine.p1064LattDepths);
-            obj.s915LattDepths = tabUnpackNum(CSVTableLine.s915LattDepths);
-            obj.LatticeHoldTimes = tabUnpackNum(CSVTableLine.LatticeHoldTimes);
+            if size(ncVars,1)>1
+                notVars = horzcat(transpose(properties(obj)),transpose(ncVars));
+            else
+                notVars = horzcat(transpose(properties(obj)),ncVars);
+            end
             
-            obj.KDCal915 = tabUnpackNum(CSVTableLine.KDCal915);
+            obj.vars=struct();
+            obj.ncVars=struct();
+            for colVar=CSVTableLine.Properties.VariableNames
+                if all(~ismember(notVars,colVar{1}))
+                    obj.vars.(colVar{1}) = tabUnpack(CSVTableLine.(colVar{1}));
+                elseif any(ismember(ncVars,colVar{1}))
+                    obj.ncVars.(colVar{1}) = tabUnpack(CSVTableLine.(colVar{1}));
+                end
+            end
+            
             
             obj.Comments = tabUnpackChar(CSVTableLine.Comments);
             
@@ -69,20 +99,102 @@ classdef RunInfo
             splitRunName = split(runFold,' ');
             obj.RunNumber = splitRunName{1};
             
-            obj.FilePath = makeFilePath(citadelDir, '2020', obj.Month , obj.Day , obj.RunFolder);
+            obj.FilePath = makeFilePath(citadelDir, obj.Year, obj.Month , obj.Day , obj.RunFolder);
             
-            obj.RunID = makeRunID(obj.Month,obj.Day,obj.SeriesID,obj.RunType,obj.RunNumber);
+            obj.RunID = makeRunID(obj.Year,obj.Month,obj.Day,obj.SeriesID,obj.RunType,obj.RunNumber);
+       
+            obj.emptyElementFlag = checkForEmptyElem(obj);
+        end
+        
+        function obj = writeRunInfo(obj,CSVTableLine,citadelDir,ncVars)
+            %A clone of the constructor for loading the RunInfo with data
+            %in the case that it was initialized empty.
+            %
+            %Populates the properties from the input one row table
+            %CSVTableLine that is expected to be generated from a readtable
+            %command acted on a csv file.  Assumes that readtable has been
+            %used to make all outputs cellarrays with strings.  Multiple
+            %values should be separated with ; in the original csv (e.g. for multple depts)
+            %Example call CSVTableLine = readtable('RunInfoTable.csv','Format',repmat('%s',[1,10]),'TextType','char','Delimiter',',')
+            %
+            %   ncVars are an optional input cell array of variables that
+            %   are not stored by cicero.  It is of the form {'var1','var2',...}
+            %   The strings in ncVars should be elements of the table CSVTableLine
+            
+            if nargin==0
+                tableElements = {'Year','Month','Day','SeriesID','RunType','RunFolder','Comments'};
+                CSVTableLine=table('Size',size(tableElements),...
+                    'VariableType',repelem({'cellstr'},length(tableElements)),...
+                    'VariableNames',tableElements);
+                citadelDir='';
+                ncVars={};
+            end
+            if nargin<3
+                ncVars={};
+            end
+            obj.CitadelDir = citadelDir;
+            obj.emptyElementFlag=0;
+            
+            
+            % Direct loading of properties provided in csv file
+            if any(strcmp(CSVTableLine.Properties.VariableNames,'Year'))
+                obj.Year = tabUnpackNum(CSVTableLine.Year);
+            else
+                warning('No year specified.  Assuming current year.')
+                obj.Year = num2str(datetime('now').Year);
+            end
+            obj.Month = tabUnpackNum(CSVTableLine.Month);
+            obj.Day = tabUnpackNum(CSVTableLine.Day);
+            
+            obj.SeriesID = tabUnpackChar(CSVTableLine.SeriesID);
+            obj.RunType = tabUnpackChar(CSVTableLine.RunType);
+            
+            obj.RunFolder = tabUnpackChar(CSVTableLine.RunFolder);
+            
+            if size(ncVars,1)>1
+                notVars = horzcat({'Year','Month','Day','SeriesID','RunType','RunFolder','RunID','Comments'},transpose(ncVars));
+            else 
+                notVars = horzcat({'Year','Month','Day','SeriesID','RunType','RunFolder','RunID','Comments'},ncVars);
+            end
+                
+            obj.vars=struct();
+            obj.ncVars=struct();
+            for colVar=CSVTableLine.Properties.VariableNames
+                if all(~ismember(notVars,colVar{1}))
+                    obj.vars.(colVar{1}) = tabUnpack(CSVTableLine.(colVar{1}));
+                elseif any(ismember(ncVars,colVar{1}))
+                    obj.ncVars.(colVar{1}) = tabUnpack(CSVTableLine.(colVar{1}));
+                end
+            end
+            
+            
+            obj.Comments = tabUnpackChar(CSVTableLine.Comments);
+            
+            
+            % Generated properties
+            if iscell(CSVTableLine.RunFolder)
+                runFolder = CSVTableLine.RunFolder{1};
+            else
+                runFolder = CSVTableLine.RunFolder;
+            end
+            
+            
+            splitRunName = split(runFolder,' ');
+            obj.RunNumber = splitRunName{1};
+            
+            obj.FilePath = makeFilePath(citadelDir, obj.Year, obj.Month , obj.Day , obj.RunFolder);
+            
+            obj.RunID = makeRunID(obj.Year,obj.Month,obj.Day,obj.SeriesID,obj.RunType,obj.RunNumber);
        
             obj.emptyElementFlag = checkForEmptyElem(obj);
         end
         
         function outFlag = checkForEmptyElem(obj) 
-            %Redefine here as a member function after construction
-            %Ignores empty comments
+            %Check if the RunInfo (or RunInfoSubset) has an empty element
             outFlag = checkForEmptyElem(obj);
         end
         
-        function nonZeroSub = checkForNonZeroSubset(obj,conditionsCellArray)
+        function nonZeroSub = isNonZeroSubset(obj,conditionsCellArray)
             %Returns 1 if the conditions given are satisfied by at least
             %one atomcloud in the dataset.  (Note, assumes that only one 
             %variable was changed each run.)
@@ -176,26 +288,40 @@ classdef RunInfo
                 'Conditions were not given as pairs of variables and possible values')
             
             %Initialize output table
-            tableElements = {'Month','Day','SeriesID','RunType','RunFolder','p1064LattDepths',...
-                's915LattDepths','LatticeHoldTimes','KDCal915','Comments'};
+            tableElements = horzcat(...
+                {'Year','Month','Day','SeriesID','RunType','RunFolder'},...
+                transpose(fieldnames(obj.vars)),...
+                transpose(fieldnames(obj.ncVars)),...
+                {'Comments'});
             outputTable = table('Size',size(tableElements),...
                 'VariableType',repelem({'cell'},length(tableElements)),...
                 'VariableNames',tableElements);
             
             %Fill output table with all data as is
-            
+            outputTable.Year = num2str(obj.Year);
             outputTable.Month = num2str(obj.Month);
             outputTable.Day = num2str(obj.Day);
             outputTable.SeriesID = obj.SeriesID;
             outputTable.RunType = obj.RunType;
             outputTable.RunFolder = obj.RunFolder;
             
-            outputTable.p1064LattDepths = convertNumArray2CellString(obj.p1064LattDepths);
-            outputTable.s915LattDepths = convertNumArray2CellString(obj.s915LattDepths);
-            outputTable.LatticeHoldTimes = convertNumArray2CellString(obj.LatticeHoldTimes);
-            outputTable.KDCal915 = convertNumArray2CellString(obj.KDCal915);
-            outputTable.Comments = obj.Comments;
-         
+            if ~isempty(fieldnames(obj.vars))
+                for aVar=transpose(fieldnames(obj.vars))
+                    outputTable.(aVar{1}) = convertNumArray2CellString(obj.vars.(aVar{1}));
+                end
+            end
+            
+            if ~isempty(fieldnames(obj.ncVars))
+                for aVar=transpose(fieldnames(obj.ncVars))
+                    outputTable.(aVar{1}) = convertNumArray2CellString(obj.ncVars.(aVar{1}));
+                end
+            end
+            
+            if ~isempty(obj.Comments)
+                outputTable.Comments = obj.Comments;
+            else
+                outputTable.Comments = cell(1,1);
+            end
             
             % Iterating through the conditions and checking which elements
             % satisfy the conditions
@@ -217,25 +343,48 @@ classdef RunInfo
     end %Methods
 end %Class def
 
+function out = tabUnpack(tabElem)
+    if iscell(tabElem)
+        tabElem = tabElem{1};
+    end
+    if isempty(tabElem)
+        out = [];
+        return
+    end
+    
+    tryNum = str2double(split(tabElem,';'));
+    if any(isnan(tryNum))
+        % Does not seem to be numeric
+        out = tabElem;
+    else
+        out = tryNum;
+    end
+end
+
 function out = tabUnpackChar(tabElem)
     if iscell(tabElem)
         tabElem = tabElem{1};
     end
     out = tabElem;
 end 
+
 function out = tabUnpackNum(tabElem)
     if iscell(tabElem)
         tabElem = tabElem{1};
     end
     if isempty(tabElem)
         out = [];
-        disp('EMPTY ELEM')
     else
         out = str2double(split(tabElem,';'));
     end
 end
 
 function [filePath] = makeFilePath(citadelDir,year,month,day,runFolder)
+    cYear = num2str(year);
+    if length(cYear)==2
+        cYear = ['20' cYear];
+    end
+
     cMonth = num2str(month);
     if length(cMonth)<2
         cMonth = ['0' cMonth];
@@ -248,20 +397,21 @@ function [filePath] = makeFilePath(citadelDir,year,month,day,runFolder)
     
     filePath = [citadelDir filesep... 
         'StrontiumData' filesep...
-        year filesep...
-        year '.' cMonth filesep...
+        cYear filesep...
+        cYear '.' cMonth filesep...
         cMonth '.' cDay filesep...
         runFolder];
 end
 
 function outFlag = checkForEmptyElem(obj)   
     outFlag = 0;
+    ignoreProps={'generatingConditons','Comments','fullRunInfo'};
     props = properties(obj);
     for iprop = 1:length(props)
       thisprop = props{iprop};
 
         if isempty(obj.(thisprop))
-            if ~strcmp(thisprop,'Comments')
+            if all(~strcmp(thisprop,ignoreProps))
                 outFlag = 1;
                 return
             end
@@ -270,7 +420,12 @@ function outFlag = checkForEmptyElem(obj)
     end
 end
 
-function [runID] = makeRunID(month,day,seriesID,runType,runNumber)
+function [runID] = makeRunID(year,month,day,seriesID,runType,runNumber)
+    
+    cYear = num2str(year);
+    if length(cYear)==2
+        cYear = ['20' cYear];
+    end
 
     cMonth = num2str(month);
     if length(cMonth)<2
@@ -282,74 +437,13 @@ function [runID] = makeRunID(month,day,seriesID,runType,runNumber)
         cDay = ['0' cDay];
     end
     
-    runID = [cMonth '_'... 
+    runID = [cYear '_'...
+        cMonth '_'... 
         cDay '_'...
         'Series' seriesID '_'...
         runType '_'...
-        'Run' runNumber];
+        'Run-' runNumber];
 end
 
-function outCell = convertNumArray2CellString(numArray)
-    cellString = '';
-    if ~isempty(numArray)
-        cellString = num2str(numArray(1));
-    end
-    for ii=2:length(numArray)
-        cellString = [cellString ';' num2str(numArray(ii))];
-    end
-    outCell = {cellString};
-end
 
-function out = checkCondition(obj,var,condition)             
-    %The property being checked is a number array
-    if isnumeric(obj.(var))
-        runVals = obj.(var);
-        allSatisVals = [];
 
-        %Parse condition
-        commaSplit = split(condition,',');
-        for jj=1:length(commaSplit)
-            assert(count(commaSplit{jj},'to')<2,'Conditions must only contain at most one ''to'' to represent range.  Separate conditions must be separated by commas')
-            if count(commaSplit{jj},'to')==1
-                %A range condition
-                rangeCond=split(commaSplit{jj},'to');
-                lowerBound=str2double(rangeCond{1});
-                upperBound=str2double(rangeCond{2});
-
-                assert(lowerBound<=upperBound,'Range conditions must be expressed ''<LowerBound>to<UpperBound>'' ')
-
-                satisVals = runVals(runVals>=lowerBound & runVals<=upperBound);
-            else
-                %A single element condition
-                el = str2double(commaSplit{jj});
-                if ismember(el,runVals)
-                    satisVals = el;
-                else
-                    satisVals = [];
-                end
-            end
-            allSatisVals = vertcat(allSatisVals,satisVals);
-        end
-
-        out = sort(unique(allSatisVals));
-
-    %The property being checked is a char array
-    elseif ischar(obj.(var))
-        if strcmp(condition(1),'=')
-            condition = condition(2:end);
-            if strcmp(condition,obj.(var))
-                out = obj.(var);
-            else
-                out = '';
-            end
-        else
-            if contains(obj.(var),condition)
-                out = obj.(var);
-            else
-                out = '';
-            end
-        end
-    else
-        warning(['The condition ' condition ' was ignored because the variable ' var ' was neither a char or number somehow'])
-    end %checking type of property (numeric or char)
-end
