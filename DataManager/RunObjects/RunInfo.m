@@ -8,7 +8,7 @@ classdef RunInfo
         SeriesID
         RunType
         
-        CitadelDir
+        DataDir
         FilePath
         RunFolder %Folder title
         RunNumber %Char number
@@ -26,13 +26,16 @@ classdef RunInfo
     end
     
     methods
-        function obj = RunInfo(CSVTableLine,citadelDir,ncVars)
+        function obj = RunInfo(CSVTableLine,dataDir,ncVars)
             %Populates the properties from the input one row table
             %CSVTableLine that is expected to be generated from a readtable
             %command acted on a csv file.  Assumes that readtable has been
             %used to make all outputs cellarrays with strings.  Multiple
             %values should be separated with ; in the original csv (e.g. for multple depts)
             %Example call CSVTableLine = readtable('RunInfoTable.csv','Format',repmat('%s',[1,10]),'TextType','char','Delimiter',',')
+            %
+            %   dataDir is the directory for this machine that contains the
+            %   desired data (e.g. /Volumes/WeldLab/StrontiumData on my machine)
             %
             %   ncVars are an optional input cell array of variables that
             %   are not stored by cicero.  It is of the form {'var1','var2',...}
@@ -43,13 +46,13 @@ classdef RunInfo
                 CSVTableLine=table('Size',size(tableElements),...
                     'VariableType',repelem({'cellstr'},length(tableElements)),...
                     'VariableNames',tableElements);
-                citadelDir='';
+                dataDir='';
                 ncVars={};
             end
             if nargin<3
                 ncVars={};
             end
-            obj.CitadelDir = citadelDir;
+            obj.DataDir = dataDir;
             obj.emptyElementFlag=0;
             
             
@@ -99,7 +102,7 @@ classdef RunInfo
             splitRunName = split(runFold,' ');
             obj.RunNumber = splitRunName{1};
             
-            obj.FilePath = makeFilePath(citadelDir, obj.Year, obj.Month , obj.Day , obj.RunFolder);
+            obj.FilePath = makeFilePath(obj.DataDir , obj.Year, obj.Month , obj.Day , obj.RunFolder);
             
             obj.RunID = makeRunID(obj.Year,obj.Month,obj.Day,obj.SeriesID,obj.RunType,obj.RunNumber);
        
@@ -108,7 +111,7 @@ classdef RunInfo
         
         
         
-        function obj = writeRunInfo(obj,CSVTableLine,citadelDir,ncVars)
+        function obj = writeRunInfo(obj,CSVTableLine,dataDir,ncVars)
             %A clone of the constructor for loading the RunInfo with data
             %in the case that it was initialized empty.
             %
@@ -128,13 +131,13 @@ classdef RunInfo
                 CSVTableLine=table('Size',size(tableElements),...
                     'VariableType',repelem({'cellstr'},length(tableElements)),...
                     'VariableNames',tableElements);
-                citadelDir='';
+                dataDir='';
                 ncVars={};
             end
             if nargin<3
                 ncVars={};
             end
-            obj.CitadelDir = citadelDir;
+            obj.DataDir = dataDir;
             obj.emptyElementFlag=0;
             
             
@@ -184,7 +187,7 @@ classdef RunInfo
             splitRunName = split(runFolder,' ');
             obj.RunNumber = splitRunName{1};
             
-            obj.FilePath = makeFilePath(citadelDir, obj.Year, obj.Month , obj.Day , obj.RunFolder);
+            obj.FilePath = makeFilePath(obj.DataDir, obj.Year, obj.Month , obj.Day , obj.RunFolder);
             
             obj.RunID = makeRunID(obj.Year,obj.Month,obj.Day,obj.SeriesID,obj.RunType,obj.RunNumber);
        
@@ -301,7 +304,7 @@ classdef RunInfo
         function outputTable = conditionalConstructionTable(obj,conditionsCellArray)
             %Generates a single line table of the form used to construct
             %this object (i.e. CSVTableLine in the constructor function 
-            %obj = RunInfo(CSVTableLine,citadelDir)).  However, only the
+            %obj = RunInfo(CSVTableLine,dataDir)).  However, only the
             %values satisfying the provided conditions are included in the
             %table.
             %    The conditions should be provided in a cell array with an
@@ -454,7 +457,7 @@ function out = tabUnpackNum(tabElem)
     end
 end
 
-function [filePath] = makeFilePath(citadelDir,year,month,day,runFolder)
+function [filePath] = makeFilePath(dataDir,year,month,day,runFolder)
     cYear = num2str(year);
     if length(cYear)==2
         cYear = ['20' cYear];
@@ -470,8 +473,7 @@ function [filePath] = makeFilePath(citadelDir,year,month,day,runFolder)
         cDay = ['0' cDay];
     end
     
-    filePath = [citadelDir filesep... 
-        'StrontiumData' filesep...
+    filePath = [dataDir filesep...
         cYear filesep...
         cYear '.' cMonth filesep...
         cMonth '.' cDay filesep...

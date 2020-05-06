@@ -8,7 +8,7 @@ infoTable = readtable('shortAutoConstrTestTable.csv','Format',repmat('%s',[1,num
 
 shorterInfoTable = infoTable(1:2,:);
 
-citadelDir = '/Volumes/WeldLab';
+dataDir = '/Volumes/WeldLab/StrontiumData';
 
 p=genpath('DataManager'); %the DataManager folder must be in the current working folder for this to work, but you could do a variant on this if you save DataManager somewhere else.
 oldpath = addpath(p);
@@ -23,7 +23,7 @@ includeVars = {'VVA1064_Er'};
 excludeVars = {'IterationCount','IterationNum'};
 
 autoGenData = RunDataLibrary();
-autoGenData = autoGenData.autoConstruct(shorterInfoTable,citadelDir,ncVars,includeVars,excludeVars);
+autoGenData = autoGenData.autoConstruct(shorterInfoTable,dataDir,ncVars,includeVars,excludeVars);
 
 autoGenDataSubset = RunDataLibrary();
 autoGenDataSubset = autoGenDataSubset.libraryConstruct(autoGenData,{'VVA915_Er','0.008'});

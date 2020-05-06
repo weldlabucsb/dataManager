@@ -32,7 +32,7 @@ classdef RunInfoLibrary<LibraryCatalog
         
         
         
-        function [obj]=tableConstruct(obj,table,citadelDir,conditionsCellArray,ncVars)
+        function [obj]=tableConstruct(obj,table,dataDir,conditionsCellArray,ncVars)
             %Completes construction of this library by filling it out using
             %a Matlab table object (like one generated from reading a csv
             %file using:
@@ -40,7 +40,9 @@ classdef RunInfoLibrary<LibraryCatalog
             %   
             %   table should be the table of run information from the csv
             %
-            %   citadelDir should be a directory to the citadel
+            %   dataDir should be a directory to the folder containing the
+            %   data.  Usually it is on the citadel.  (e.g.
+            %   /Volumes/WeldLab/StrontiumData
             %
             %   conditionsCellArray should be a cell array of conditions on
             %   the variables in the run info
@@ -60,7 +62,7 @@ classdef RunInfoLibrary<LibraryCatalog
             obj.RunInfos=cell(size(table,1),1);
             obj.RunIDs=cell(size(table,1),1);
             for ii = 1:size(table,1)
-                runInfo = RunInfo(table(ii,:),citadelDir,ncVars);
+                runInfo = RunInfo(table(ii,:),dataDir,ncVars);
                 
                 [obj.RunInfos{ii},obj.RunIDs{ii}]=runInfoToAdd(runInfo,conditionsCellArray);
                 

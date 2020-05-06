@@ -132,7 +132,7 @@ classdef RunData<RunInfoSubset
         
         
         
-        function obj = constructTable(obj,CSVTableLine,citadelDir,ncVars,specifiedFolderPath)
+        function obj = constructTable(obj,CSVTableLine,dataDir,ncVars,specifiedFolderPath)
             %Constructs the object from a CSV Table line (given as a
             %matlab table object) in the same format as RunInfo is
             %constructed.  
@@ -144,7 +144,7 @@ classdef RunData<RunInfoSubset
             if nargin<4
                 ncVars = {};
             end
-            obj = obj.writeRunInfo(CSVTableLine,citadelDir,ncVars);
+            obj = obj.writeRunInfo(CSVTableLine,dataDir,ncVars);
             
             if nargin<5
                 specifiedFolderPath = obj.FilePath;
@@ -223,7 +223,7 @@ classdef RunData<RunInfoSubset
                 
                 
                 % Building up the tiff file path for this machine
-                thisTiffFile = horzcat(obj.CitadelDir, filesep, fileSeparatedName{yearFolderIndex-1});
+                thisTiffFile = obj.DataDir;
                 for jj = yearFolderIndex:length(fileSeparatedName)
                     thisTiffFile = horzcat(thisTiffFile, filesep, fileSeparatedName{jj});
                 end

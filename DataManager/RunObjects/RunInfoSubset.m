@@ -30,7 +30,7 @@ classdef RunInfoSubset<RunInfo
                 
                 subTable = makeEmptyGeneratingTable;
                 
-                citadelDir='';
+                dataDir='';
                 ncVarFields={};
             else
                 if nargin<2
@@ -44,14 +44,14 @@ classdef RunInfoSubset<RunInfo
                     assert(any(size(conditionsCellArray)==1),'conditionsCellArray must be either a row cell array or a column cell array.')
                 end
                 subTable = runInfo.conditionalConstructionTable(conditionsCellArray);
-                citadelDir = runInfo.CitadelDir;
+                dataDir = runInfo.DataDir;
                 ncVarFields=fieldnames(runInfo.ncVars);
             end
             
 
             %Using superclass constructor with a table generated that has
             %conditions placed on it.
-            obj@RunInfo(subTable,citadelDir,ncVarFields);
+            obj@RunInfo(subTable,dataDir,ncVarFields);
             
             
             

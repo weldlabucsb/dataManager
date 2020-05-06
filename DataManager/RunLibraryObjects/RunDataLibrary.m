@@ -87,7 +87,7 @@ classdef RunDataLibrary<LibraryCatalog
         
         
         
-        function obj = tableConstruct(obj,table,citadelDir,conditionsCellArray,ncVars,specifiedFolderPaths)
+        function obj = tableConstruct(obj,table,dataDir,conditionsCellArray,ncVars,specifiedFolderPaths)
             %Construct the data library from a table generated from a CSV
             %(in the same style as RunInfoLibrary.tableConstruct)
             %   specifiedFolderPaths is a cell array of folderpaths for
@@ -103,7 +103,7 @@ classdef RunDataLibrary<LibraryCatalog
             if nargin<4
                 conditionsCellArray={};
             end
-            runInfoLib = runInfoLib.tableConstruct(table,citadelDir,conditionsCellArray,ncVars);
+            runInfoLib = runInfoLib.tableConstruct(table,dataDir,conditionsCellArray,ncVars);
             if nargin<6
                 %If no specifiedFolderPaths
                 obj = obj.libraryConstruct(runInfoLib,{});
@@ -115,7 +115,7 @@ classdef RunDataLibrary<LibraryCatalog
         
         
         
-        function obj = autoConstruct(obj,table,citadelDir,ncVars,includeVars,excludeVars,specifiedFolderPath)
+        function obj = autoConstruct(obj,table,dataDir,ncVars,includeVars,excludeVars,specifiedFolderPath)
             %Completes construction of this library by identifying run
             %folders from the table object and calling their atomdata.mat
             %files to determine what variables changed among the sets of
@@ -127,8 +127,9 @@ classdef RunDataLibrary<LibraryCatalog
             %   be either Cicero variables or non-Cicero variables.  Non-Cicero 
             %   variables must also be indicated in the ncVars cell array.
             %   
-            %   citadelDir is the directory to the citadel volume that
-            %   contains the "StrontiumData" folder.  Ignored if you put a
+            %   dataDir is the directory to the directory (usually on the citadel) 
+            %   that contains the data.  For example /Volumes/WeldLab/StrontiumData  
+            %   or W:\StrontiumData.  It is ignored if you put a
             %   specifiedFolderPath cell array.
             %
             %   specifiedFolderPaths is a cell array of folderpaths for
@@ -164,7 +165,7 @@ classdef RunDataLibrary<LibraryCatalog
             % Constructing a library from the information given in the
             % table.  Mostly used to get the run folders.
             baseRunInfoLib = RunInfoLibrary();
-            baseRunInfoLib = baseRunInfoLib.tableConstruct(table,citadelDir,{},ncVars);
+            baseRunInfoLib = baseRunInfoLib.tableConstruct(table,dataDir,{},ncVars);
             
             
             % Starting to populate this RunDataLibrary objects
@@ -190,7 +191,7 @@ classdef RunDataLibrary<LibraryCatalog
                 
                 % Setting the RunData Properties from the runInfo
                 % properties
-                propsToFill = {'RunID', 'SeriesID', 'RunType', 'CitadelDir'...
+                propsToFill = {'RunID', 'SeriesID', 'RunType', 'DataDir'...
                     'FilePath','RunFolder','RunNumber','Year','Month','Day','vars',...
                     'ncVars','Comments'};
                 for cellProp=propsToFill
