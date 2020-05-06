@@ -18,6 +18,9 @@ classdef LibraryCatalog
             obj.RunProperties = struct();
             obj.RunIDs = {};
         end
+        
+        
+        
         function [obj,runPropsStruct] = determineRunProps(obj,runInfos)
             %Searches through all of the RunInfos to determine all of the
             %available run information values.
@@ -38,13 +41,19 @@ classdef LibraryCatalog
                             if ~isfield(runProperties,prop)
                                 runProperties.(prop)=runInfos{ii}.(prop);
                             else
-                                runProperties.(prop)=unique(sort(vertcat(runProperties.(prop),runInfos{ii}.(prop))));
+                                runProperties.(prop)=union(runProperties.(prop),runInfos{ii}.(prop));
+                                if size(runProperties.(prop),2)~=1
+                                    runProperties.(prop) = transpose(runProperties.(prop));
+                                end
                             end
                         elseif ischar(runInfos{ii}.(prop))
                             if ~isfield(runProperties,prop)
                                 runProperties.(prop)={runInfos{ii}.(prop)};
                             else
-                                runProperties.(prop)=unique(sort(vertcat(runProperties.(prop),{runInfos{ii}.(prop)})));
+                                runProperties.(prop)=union(runProperties.(prop),{runInfos{ii}.(prop)});
+                                if size(runProperties.(prop),2)~=1
+                                    runProperties.(prop) = transpose(runProperties.(prop));
+                                end
                             end
                         else
                             error(['The property element ',prop, ' is somehow neither a char or numeric variable'])
@@ -63,20 +72,24 @@ classdef LibraryCatalog
                                 runProperties.(varStructName).(var)=RunInfoVarStruct.(var);
                             else
                                 runProperties.(varStructName).(var)=...
-                                    unique(sort(...
-                                    vertcat(...
+                                    union(...
                                         runProperties.(varStructName).(var),...
-                                        RunInfoVarStruct.(var))));
+                                        RunInfoVarStruct.(var));
+                                if size(runProperties.(varStructName).(var),2)~=1
+                                    runProperties.(varStructName).(var) = transpose(runProperties.(varStructName).(var));
+                                end
                             end
                         elseif ischar(RunInfoVarStruct.(var))
                             if ~isfield(runProperties.(varStructName),var)
                                 runProperties.(varStructName).(var)={RunInfoVarStruct.(var)}; %Needs to be in cell
                             else
                                 runProperties.(varStructName).(var)=...
-                                    unique(sort(...
-                                    vertcat(...
+                                    union(...
                                         runProperties.(varStructName).(var),...
-                                        {RunInfoVarStruct.(var)})));
+                                        {RunInfoVarStruct.(var)});
+                                if size(runProperties.(varStructName).(var),2)~=1
+                                    runProperties.(varStructName).(var) = transpose(runProperties.(varStructName).(var));
+                                end
                             end
                         else
                             error(['The variable ',var, ' is somehow neither a char or numeric variable'])
@@ -90,6 +103,8 @@ classdef LibraryCatalog
                 runPropsStruct = runProperties;
             end
         end
+        
+        
         
         function [cellOfRunObjects,listRunIDs,rangeRunProperties,satisInds] = whichRuns(obj,conditionsCellArray)
             % Determines which runs in the library satisfy the conditions

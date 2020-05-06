@@ -30,6 +30,8 @@ classdef RunDataLibrary<LibraryCatalog
             obj.RunDatas = {};
         end
         
+        
+        
         function obj = libraryConstruct(obj,library,conditionsCellArray,specifiedFolderPaths)
             %Fill out the RunDataLibrary object from either a
             %RunInfoLibrary or a different RunDataLibrary (given as library).
@@ -79,11 +81,12 @@ classdef RunDataLibrary<LibraryCatalog
                 error('library input argument must either be of class RunDataLibrary or RunInfoLibrary.')
             end
             
-            
             %Determine all of the properties
-            obj = obj.determineRunProps(obj.RunDatas);
-            
+            obj = obj.determineRunProps(obj.RunDatas); 
         end
+        
+        
+        
         function obj = tableConstruct(obj,table,citadelDir,conditionsCellArray,ncVars,specifiedFolderPaths)
             %Construct the data library from a table generated from a CSV
             %(in the same style as RunInfoLibrary.tableConstruct)
@@ -110,14 +113,253 @@ classdef RunDataLibrary<LibraryCatalog
             end
         end
         
-        function outputArg = autoConstruct(obj,table,citadelDir,conditionsCellArray,specifiedFolderPath)
+        
+        
+        function obj = autoConstruct(obj,table,citadelDir,ncVars,includeVars,excludeVars,specifiedFolderPath)
             %Completes construction of this library by identifying run
             %folders from the table object and calling their atomdata.mat
             %files to determine what variables changed among the sets of
             %runs
-            error('Under Construction!')
+            %   
+            %   table is a matlab table object with the following table elements
+            %   'Year','Month','Day','SeriesID','RunType','RunFolder','Comments'
+            %   You can add more table elements, which will be assumed to
+            %   be either Cicero variables or non-Cicero variables.  Non-Cicero 
+            %   variables must also be indicated in the ncVars cell array.
+            %   
+            %   citadelDir is the directory to the citadel volume that
+            %   contains the "StrontiumData" folder.  Ignored if you put a
+            %   specifiedFolderPath cell array.
+            %
+            %   specifiedFolderPaths is a cell array of folderpaths for
+            %   each atomdata.  It is in case you do not have a connection
+            %   to the citadel or if you stored the atomdata.mat files
+            %   locally for some reason.  It must be the same length as the
+            %   number of elements in the library.
+            %
+            %   ncVars are "non-cicero vars."  ncVars is a cell array of
+            %   the names of the non-cicero variables.  Use these if there
+            %   are parameters varied over the set of runs that is NOT
+            %   automatically kept track of by cicero.
+            %
+            %   includeVars is a cell array of variable names that
+            %   you would like to be considered EVEN IF they are not varied
+            %   over the runs of the data set.
+            %
+            %   excludeVars is a cell array of variables that you like NOT
+            %   to be considered EVEN IF they are varied over the runs of
+            %   the data set.
+            
+            if nargin<6
+                excludeVars = {};
+            end
+            if nargin<5
+                includeVars = {};
+            end
+            if nargin<4 
+                ncVars = {};
+            end
+            
+            
+            % Constructing a library from the information given in the
+            % table.  Mostly used to get the run folders.
+            baseRunInfoLib = RunInfoLibrary();
+            baseRunInfoLib = baseRunInfoLib.tableConstruct(table,citadelDir,{},ncVars);
+            
+            
+            % Starting to populate this RunDataLibrary objects
+            obj.RunDatas = cell(length(baseRunInfoLib.RunInfos),1);
+            obj.RunIDs = cell(length(baseRunInfoLib.RunInfos),1);
+            
+            % Just loading in the Atomdata first
+            for ii=1:length(baseRunInfoLib.RunInfos)
+                
+                runInfo=baseRunInfoLib.RunInfos{ii};
+                
+                % Get the folder with atomdata.mat in it
+                if (nargin<7)||(isempty(specifiedFolderPath))
+                    checkIfAtomDataExists(runInfo.FilePath)
+                    folderPath = runInfo.FilePath;
+                else
+                    checkIfAtomDataExists(specifiedFolderPath)
+                    folderPath = specifiedFolderPath{ii};
+                end
+                
+                
+                obj.RunDatas{ii} = RunData();
+                
+                % Setting the RunData Properties from the runInfo
+                % properties
+                propsToFill = {'RunID', 'SeriesID', 'RunType', 'CitadelDir'...
+                    'FilePath','RunFolder','RunNumber','Year','Month','Day','vars',...
+                    'ncVars','Comments'};
+                for cellProp=propsToFill
+                    prop = cellProp{1};
+                    obj.RunDatas{ii}.(prop) = runInfo.(prop);
+                end
+                
+                obj.RunDatas{ii}.emptyElementFlag = false;
+                
+                % Loading atom data and storing in
+                % obj.RunDatas{ii}.Atomdata
+                disp(['    Loading atomdata from ' num2str(runInfo.Month) '/' num2str(runInfo.Day) '/' num2str(runInfo.Year) ' Run: ' runInfo.RunFolder])
+                obj.RunDatas{ii}.Atomdata = load([folderPath filesep 'atomdata.mat']).atomdata;
+                
+                obj.RunIDs{ii} = runInfo.RunID;
+            end
+            
+            % Determine what cicero variables are varied among the set of
+            % runs
+            changedVars = {}; % vars that are changed over the set of runs.
+            cicSeqChangeVars = {};  % Variables that were changed in the sequence change (used to make sure you only get one warning about it)
+            
+            % Using the first atomdata or the first run datas to initialize
+            % all of the variables.
+            allVars = fieldnames(obj.RunDatas{1}.Atomdata(1).vars);
+            
+            for jj = 2:length(obj.RunDatas{1}.Atomdata)
+                for cVar = transpose(...
+                        fieldnames(obj.RunDatas{1}.Atomdata(jj).vars))
+                    var = cVar{1};
+                    
+                    if obj.RunDatas{1}.Atomdata(jj).vars.(var) ~= obj.RunDatas{1}.Atomdata(1).vars.(var)
+                        % If this atomdata var value is not equal to the
+                        % first one
+                        if ~ismember(var,changedVars)
+                            changedVars = vertcat(changedVars,var);
+                        end
+                    end
+                end
+            end
+            
+            for ii = 2:length(obj.RunDatas)
+                prevAllVars = allVars;
+                allVars = union(...
+                            prevAllVars,...
+                            fieldnames(obj.RunDatas{ii}.Atomdata(1).vars),...
+                            'stable');
+                if size(allVars,2)~=1
+                    allVars = transpose(allVars);
+                end
+                
+                % Checking if a variable was added or not
+                if length(prevAllVars)<length(allVars)
+                    addedVars = setdiff(allVars,prevAllVars);
+                    if size(addedVars,1)~=1
+                        addedVars = transpose(addedVars);
+                    end
+                    for cellcvar = addedVars
+                        % for loop in case more than 1 changed var
+                        cvar = cellcvar{1};
+                        if ~ismember(cvar,cicSeqChangeVars)
+                            cicSeqChangeVars=vertcat(cicSeqChangeVars,cvar);
+                            warning(['The variable ' cvar ' was either added or removed to the cicero sequence over the course of this data taking.'])
+                            disp(obj.RunDatas{ii}.RunID)
+                            changedVars = vertcat(changedVars,cvar);
+                        end  
+                    end
+                end
+                if length(fieldnames(obj.RunDatas{ii}.Atomdata(1).vars))<length(allVars)
+                    addedVars = setdiff(allVars , obj.RunDatas{ii}.Atomdata(1).vars);
+                    if size(addedVars,1)~=1
+                        addedVars = transpose(addedVars);
+                    end
+                    for cellcvar = addedVars
+                        % for loop in case more than 1 changed var
+                        cvar = cellcvar{1};
+                        if ~ismember(cvar,cicSeqChangeVars)
+                            cicSeqChangeVars=vertcat(cicSeqChangeVars,cvar);
+                            warning(['The variable ' cvar ' was either added or removed to the cicero sequence over the course of this data taking.'])
+                            changedVars = vertcat(changedVars,cvar);
+                        end  
+                    end
+                end
+            end
+            
+            
+            for ii = 2:length(obj.RunDatas)
+            % Iterating through atomdata and checking if the value
+            % has changed from the first one.
+                for jj = 1:length(obj.RunDatas{ii}.Atomdata)
+                    for cVar = transpose(...
+                            fieldnames(obj.RunDatas{ii}.Atomdata(jj).vars))
+                        var = cVar{1};
+                        if ~ismember(var, cicSeqChangeVars)
+                            % If its a variable that is in some runs and
+                            % not others, we skip it to avoid an error
+                            % accessing a nonexistant var.
+                            if obj.RunDatas{ii}.Atomdata(jj).vars.(var) ~= obj.RunDatas{1}.Atomdata(1).vars.(var)
+                                % If this atomdata var value is not equal to the
+                                % first one
+                                if ~ismember(var,changedVars)
+                                    changedVars = vertcat(changedVars,var);
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+                
+            
+            % At this point, we know which variables are changed over the
+            % data sets.  This is stored in changedVars.  Next we loop
+            % through the changed Vars and gather them into the
+            % LibraryCatalog properties of RunDataLibrary.
+            
+            % Manually add the includeVars and remove the excludeVars
+            varsOfInterest = union(includeVars,changedVars,'stable');
+            varsOfInterest = setdiff(varsOfInterest,excludeVars,'stable');
+            
+            if size(varsOfInterest,1)~=1
+                varsOfInterest = transpose(varsOfInterest);
+            end
+            
+            for cVar=varsOfInterest
+                cicVar = cVar{1};
+                runInfoVar = inverseTranslateVarName(cicVar);
+                
+                for ii = 1:length(obj.RunDatas)
+                    ignoreFlag=false;
+                    [varVals,isSC] = specialCondCiceroValToRunInfo(cicVar,obj.RunDatas{ii});
+                    if isSC
+                        obj.RunDatas{ii}.vars.(runInfoVar) = varVals;
+                    else
+                        if ~isfield(obj.RunDatas{ii}.vars , runInfoVar)
+                            atomdata = obj.RunDatas{ii}.Atomdata;
+                            adVars = [atomdata.vars];
+                            if isfield(atomdata(1).vars,cicVar)
+                                varVals = unique([adVars.(cicVar)]);
+                            else
+                                varVals = [];
+                            end
+                        elseif isempty(  obj.RunDatas{ii}.vars.(runInfoVar)  )
+                            atomdata = obj.RunDatas{ii}.Atomdata;
+                            adVars = [atomdata.vars];
+                            if isfield(atomdata(1).vars , cicVar)
+                                varVals = unique([adVars.(cicVar)]);
+                            else
+                                varVals = [];
+                            end
+                        else
+                            disp(['Ignoring values of ' cicVar ' in the atom data and instead using what is specified in the original table (under variable ' runInfoVar ')'])
+                            ignoreFlag = true;
+                        end
+
+                        if size(varVals,2)>1
+                            varVals=transpose(varVals);
+                        end
+                        
+                        if ~ignoreFlag
+                            obj.RunDatas{ii}.vars.(runInfoVar) = varVals;
+                        end
+                    end % special condition
+                end %iter through RunDatas
+            end % iter through variables of interest
+            
+            % Determine the collective run properties
+            [obj,~] = determineRunProps(obj,obj.RunDatas);
+            
         end
-        
     end%methods
 end%classdef
 

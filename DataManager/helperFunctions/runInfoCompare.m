@@ -29,8 +29,10 @@ function [isSameRunInfo,differingElem] = runInfoCompare(runInfo1,runInfo2)
     end
    
     
-    ConcatAllVarsFields = vertcat(fieldnames(runInfo1.vars),fieldnames(runInfo2.vars));
-    varPropsToCheck = transpose(unique(ConcatAllVarsFields));
+    allVarsFields = union(fieldnames(runInfo1.vars),fieldnames(runInfo2.vars));
+    if size(allVarsFields,1)~=1
+        varPropsToCheck = transpose(allVarsFields);
+    end
     
     for cellProp=varPropsToCheck
         prop = cellProp{1};
@@ -55,8 +57,10 @@ function [isSameRunInfo,differingElem] = runInfoCompare(runInfo1,runInfo2)
     end
 
     
-    ConcatAllncVarsFields = vertcat(fieldnames(runInfo1.ncVars),fieldnames(runInfo2.ncVars));
-    ncVarPropsToCheck = transpose(unique(ConcatAllncVarsFields));
+    ncVarPropsToCheck = union(fieldnames(runInfo1.ncVars),fieldnames(runInfo2.ncVars));
+    if size(ncVarPropsToCheck,1)~=1
+        ncVarPropsToCheck = transpose(ncVarPropsToCheck);
+    end
     
     for cellProp=ncVarPropsToCheck
         prop = cellProp{1};

@@ -54,10 +54,13 @@ function outSatisfiers = checkConditionAtomdata(atomdata,var,condition)
                     satisVals = [];
                 end
             end
-            allSatisVals = vertcat(allSatisVals,satisVals);
+            allSatisVals = union(allSatisVals,satisVals);
+            if size(allSatisVals,2)~=1
+                allSatisVals = transpose(allSatisVals);
+            end
         end
 
-        outSatisfiers = sort(unique(allSatisVals));
+        outSatisfiers = allSatisVals;
 
     %The property being checked is a char array
     elseif ischar(varSpace.(var))

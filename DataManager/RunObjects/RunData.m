@@ -25,6 +25,8 @@ classdef RunData<RunInfoSubset
             %constructRunInfo method function or (2) constructTable
         end
         
+        
+        
         function obj = constructRunInfo(obj,runInfo,specifiedFolderPath,atomdata)
             %RunInfo as an object of the RunInfo (or RunInfoSubset) class 
             %object.  This usually contains the file path to the atomdata 
@@ -54,6 +56,7 @@ classdef RunData<RunInfoSubset
             if (nargin<4)
                 %Load full atom data before removing some, assuming
                 %atomdata is not provided
+                disp(['    Loading atomdata from ' num2str(runInfo.Month) '/' num2str(runInfo.Day) '/' num2str(runInfo.Year) ' Run: ' runInfo.RunFolder])
                 atomdata = load([folderPath filesep 'atomdata.mat']).atomdata;
             end
                 
@@ -122,6 +125,8 @@ classdef RunData<RunInfoSubset
             
             obj.Atomdata = atomdata;
         end %Iterating over fields
+        
+        
         
         function obj = constructTable(obj,CSVTableLine,citadelDir,ncVars,specifiedFolderPath)
             %Constructs the object from a CSV Table line (given as a

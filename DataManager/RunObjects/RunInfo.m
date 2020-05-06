@@ -106,6 +106,8 @@ classdef RunInfo
             obj.emptyElementFlag = checkForEmptyElem(obj);
         end
         
+        
+        
         function obj = writeRunInfo(obj,CSVTableLine,citadelDir,ncVars)
             %A clone of the constructor for loading the RunInfo with data
             %in the case that it was initialized empty.
@@ -189,10 +191,14 @@ classdef RunInfo
             obj.emptyElementFlag = checkForEmptyElem(obj);
         end
         
+        
+        
         function outFlag = checkForEmptyElem(obj) 
             %Check if the RunInfo (or RunInfoSubset) has an empty element
             outFlag = checkForEmptyElem(obj);
         end
+        
+        
         
         function nonZeroSub = isNonZeroSubset(obj,conditionsCellArray)
             %Returns 1 if the conditions given are satisfied by at least
@@ -212,6 +218,8 @@ classdef RunInfo
             end
             nonZeroSub = true;
         end
+        
+        
         
         function outputStruct = conditionalInfo(obj,conditionsCellArray)
             %Generates a struct of the properties that satisfy the
@@ -252,6 +260,8 @@ classdef RunInfo
             end %checking each condition
             
         end
+        
+        
         
         function outputTable = conditionalConstructionTable(obj,conditionsCellArray)
             %Generates a single line table of the form used to construct

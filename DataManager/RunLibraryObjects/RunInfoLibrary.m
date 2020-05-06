@@ -30,6 +30,8 @@ classdef RunInfoLibrary<LibraryCatalog
             obj.RunInfos = {};
         end
         
+        
+        
         function [obj]=tableConstruct(obj,table,citadelDir,conditionsCellArray,ncVars)
             %Completes construction of this library by filling it out using
             %a Matlab table object (like one generated from reading a csv
@@ -72,6 +74,8 @@ classdef RunInfoLibrary<LibraryCatalog
             
             obj = obj.determineRunProps(obj.RunInfos);
         end
+        
+        
         
         function obj = libraryConstruct(obj,library,conditionsCellArray)
             %Completes construction of this library by filling it out using

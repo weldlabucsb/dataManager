@@ -5,7 +5,7 @@ function [satisAD,isSC] = specialConditions(var,runInfo,atomdata)
 %to trim the atomdata to only the atomdata elements that satisfy the
 %special contion.  If no special condition, 'isSC' is set to false, and satisAD is set to
 %an empty array.
-%   Detailed explanation goes here
+
 isSC=false;
 satisAD = [];
 
