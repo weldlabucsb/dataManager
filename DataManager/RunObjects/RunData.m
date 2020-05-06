@@ -64,7 +64,7 @@ classdef RunData<RunInfoSubset
             for cellVar=transpose(fieldnames(runInfo.vars))
                 % Trim the atomdata on each loop to only those that satisfy
                 % the parameters given in the runInfo (which might be a run sub info)
-                var = cellVar{1};
+                var = cellVar{1};       
                 
                 % A function for handling special variable considerations
                 [satisAD,isSC] = specialConditions(var,runInfo,atomdata);
@@ -105,7 +105,11 @@ classdef RunData<RunInfoSubset
                     return
                 end
                 
+                %Shortening atomdata to only the ones that satisfy the
+                %conditions
                 atomdata = atomdata(satisAD);
+                
+                
                 
                 if any(~satisAD)
                     % Update GeneratingConditions in case it turns out that
@@ -148,6 +152,102 @@ classdef RunData<RunInfoSubset
             
             runInfo=obj;
             obj = obj.constructRunInfo(runInfo,specifiedFolderPath);
+        end
+        
+        
+        function [dataMatrices,tiffFiles,ROI]=getRawTiffData(obj,type,useROI,customROI)
+            % type should be either "dark", "light", or "atoms"
+            % atoms is the image of the atomic cloud on the camera (atoms present, resonant light hitting them)
+            % dark is the image taken with no atoms and no resonant light
+            % light is the image of just the resonant light hitting the
+            % camera, with no atoms in the chamber.
+            % See Cora's thesis for more details.
+            %
+            % Outputs are a matrix of the pixel values in the tif file.
+            % tiffFile is the filepath (on this machine) to the tiff file
+            % ROI is the ROI saved for the corresponding atom data.
+            %
+            % useROI is a logical variable.  When true, the dataMatrix is
+            % limited to the ROI as saved in atom data.  When false, it
+            % returns the dataMatrix for the whole file.
+            %
+            % The customROI is an ROI set by the user in the case that the
+            % ROI determined by doitAndor is not what is desired (an issue
+            % when there are rotations).  Format is [lowY,highY,lowX,highX]
+            
+            if nargin<3
+                useROI=false;
+            end
+
+            
+            if isempty(obj.Atomdata)
+                error('No atomdata in the RunData object that you tried to get the tiff file data for.')
+            end
+            atomdata = obj.Atomdata;
+            type = lower(type);
+            
+            if ~isfield(atomdata(1),type)
+                error(['The atom data you tried to get the tif file for does not contain a file path for the ' type ' image.'])
+            end
+            if isempty(atomdata(1).(type))
+                error(['The atom data you tried to get the tif file for does not contain a file path for the ' type ' image.'])
+            end
+            
+            if useROI
+                ROI = atomdata.ROI;
+            else
+                ROI = [];
+            end
+            if nargin>=4
+                ROI = customROI;
+                useROI = true;
+            end
+            
+            % Initializing empty
+            dataMatrices = cell(size(atomdata));
+            tiffFiles = cell(size(atomdata));
+            
+            for ii = 1:length(atomdata)
+                % Getting tiff files
+                if length(split(atomdata(ii).(type),'\'))>1
+                    fileSeparatedName = transpose(split(atomdata(ii).(type),'\'));
+                elseif length(split(atomdata(ii).(type),'/'))>1
+                    fileSeparatedName = transpose(split(atomdata(ii).(type),'/'));
+                else
+                    error(['Was not able to separate the ' type ' tiff file by file separators for run ' obj.RunID])
+                end
+                
+                %Gets the split file cell position that has the year folder
+                %for the data
+                yearFolderIndex = find(strcmp(fileSeparatedName,num2str(obj.Year)));
+                
+                
+                % Building up the tiff file path for this machine
+                thisTiffFile = horzcat(obj.CitadelDir, filesep, fileSeparatedName{yearFolderIndex-1});
+                for jj = yearFolderIndex:length(fileSeparatedName)
+                    thisTiffFile = horzcat(thisTiffFile, filesep, fileSeparatedName{jj});
+                end
+                tiffFiles{ii} = thisTiffFile;
+                
+                if useROI
+                    % Constructing the matrix of data points.
+                    thisDataMatrix = double(imread(thisTiffFile, 'PixelRegion',{[ROI(1),ROI(2)],[ROI(3),ROI(4)]}));
+                    if ii<10
+                        disp(['      Loading ' type ' tiff file  ' num2str(ii) '/' num2str(length(atomdata)) ' for atomdata in run ' obj.RunID])
+                    else
+                        disp(['      Loading ' type ' tiff file ' num2str(ii) '/' num2str(length(atomdata)) ' for atomdata in run ' obj.RunID])
+                    end
+                else
+                    thisDataMatrix = double(imread(thisTiffFile));
+                    if ii<10
+                        disp(['      Loading ' type ' tiff file  ' num2str(ii) '/' num2str(length(atomdata)) ' for atomdata in run ' obj.RunID])
+                    else
+                        disp(['      Loading ' type ' tiff file ' num2str(ii) '/' num2str(length(atomdata)) ' for atomdata in run ' obj.RunID])
+                    end
+                end
+                dataMatrices{ii} = thisDataMatrix;
+            end
+
         end
         
     end%methods

@@ -1,4 +1,4 @@
-function outSatisfiers = checkCondition(obj,var,condition) 
+function [outSatisfiers,iSatisIndices,linkedVars,linkedncVars] = checkCondition(obj,var,condition) 
     %See if the specified var (which could be a property of the obj, or a
     %field in obj.vars or obj.ncVars) satisfies the conditions given.  
     %
@@ -38,6 +38,7 @@ function outSatisfiers = checkCondition(obj,var,condition)
     if isnumeric(varSpace.(var))
         runVals = varSpace.(var);
         allSatisVals = [];
+        allSatisInds = false(size(runVals));
 
         %Parse condition
         commaSplit = split(condition,',');
@@ -50,24 +51,31 @@ function outSatisfiers = checkCondition(obj,var,condition)
                 upperBound=str2double(rangeCond{2});
 
                 assert(lowerBound<=upperBound,'Range conditions must be expressed ''<LowerBound>to<UpperBound>'' ')
-
-                satisVals = runVals(runVals>=lowerBound & runVals<=upperBound);
+                
+                satisInds = (runVals>=lowerBound & runVals<=upperBound);
+                satisVals = runVals(satisInds);
             else
                 %A single element condition
                 el = str2double(commaSplit{jj});
                 if ismember(el,runVals)
                     satisVals = el;
+                    satisInds = runVals==el;
                 else
                     satisVals = [];
+                    satisInds = false(size(runVals));
                 end
             end
             allSatisVals = union(allSatisVals,satisVals);
+            allSatisInds = allSatisInds|satisInds;
             if size(allSatisVals,2)~=1
                 allSatisVals = transpose(allSatisVals);
             end
         end
 
         outSatisfiers = allSatisVals;
+        iSatisIndices = allSatisInds;
+        
+        
 
     %The property being checked is a char array
     elseif ischar(varSpace.(var))
@@ -85,7 +93,46 @@ function outSatisfiers = checkCondition(obj,var,condition)
                 outSatisfiers = '';
             end
         end
+        iSatisIndices = false(0); % empty logical array
     else
         warning(['The condition ' condition ' was ignored because the variable ' var ' was neither a char or number somehow'])
     end %checking type of property (numeric or char)
+    
+    
+    % Check for linked vars (i.e. other variables that are functions of the variable that the condition is set on)
+    % NOTE only checks for ncVars and vars (didn't want to deal with other properties possibly having the same inputs)
+    linkedVars = {};
+    linkedncVars = {};
+    for ii = 1:2
+        if ii==1
+            varSpace2 = obj.vars;
+        elseif ii==2
+            varSpace2 = obj.ncVars;
+        else
+            error('Did not know how to set varSpace somehow...')
+        end
+        
+        for cellVar2=transpose(fieldnames(varSpace2))
+            var2 = cellVar2{1}; 
+            if max(size(varSpace2.(var2)))>1
+                % check that there is more than one value of this
+                % var.  We don't care if it's one for the whole
+                % set.  That would be taken care of later.
+                if all(size(varSpace2.(var2))==size(varSpace.(var)))
+                    % check that there are the same number of
+                    % values in both
+                    if ~strcmp(var,var2)
+                        % check that we haven't found the same
+                        % variable we started with.
+                        if ii==1
+                            linkedVars = horzcat(linkedVars,var2);
+                        elseif ii==2
+                            linkedncVars = horzcat(linkedncVars,var2);
+                        end
+                    end
+                end
+            end
+        end
+    end
+    
 end

@@ -247,18 +247,53 @@ classdef RunInfo
             %    Numeric conditions can be a combination of the above two
             %    specifiers, with ranges and values separated by commas 
             %    (e.g. {'LatticeHoldTime','0to1000,10000,15000to20000'})
+
             
             % Iterating through the conditions and checking which elements
             % satisfy the conditions
             numConditions = length(conditionsCellArray)/2;
+            partialConditionedRunInfo = obj;
             for ii=1:numConditions
                 var = conditionsCellArray{2*ii-1};
-                condition = conditionsCellArray{2*ii};  
+                condition = conditionsCellArray{2*ii};
                 
-                satisfiers = checkCondition(obj,var,condition);
-                outputStruct.(var) = satisfiers;
+                % Checking conditions and getting linked variables.
+                [satisfiers,satisInds,linkedVars,linkedncVars] = checkCondition(partialConditionedRunInfo,var,condition);
+                if isnumeric(satisfiers)
+                    outputStruct.(var) = satisfiers;
+                    %Updating values in partially conditioned object for
+                    %the sake of possible linked variables
+                    if isfield(partialConditionedRunInfo.vars , var)
+                        partialConditionedRunInfo.vars.(var) = satisfiers;
+                    elseif isfield(partialConditionedRunInfo.ncVars , var)
+                        partialConditionedRunInfo.ncVars.(var) = satisfiers;
+                    end
+                    
+                    %Updating linked vars
+                    for cVar2=linkedVars
+                        var2 = cVar2{1};
+                        
+                        valsBefore = partialConditionedRunInfo.vars.(var2);
+                        satisfiers2 = valsBefore(satisInds);
+                        
+                        partialConditionedRunInfo.vars.(var2) = satisfiers2;
+                        outputStruct.(var2) = satisfiers2;
+                    end
+                    
+                    for cVar2 = linkedncVars
+                        var2 = cVar2{1};
+                        
+                        valsBefore = partialConditionedRunInfo.ncVars.(var2);
+                        satisfiers2 = valsBefore(satisInds);
+                        
+                        partialConditionedRunInfo.ncVars.(var2) = satisfiers2;
+                        outputStruct.(var2) = satisfiers2;
+                    end
+                else
+                    outputStruct.(var) = {satisfiers};
+                end
+
             end %checking each condition
-            
         end
         
         
@@ -336,13 +371,43 @@ classdef RunInfo
             % Iterating through the conditions and checking which elements
             % satisfy the conditions
             numConditions = length(conditionsCellArray)/2;
+            partialConditionedRunInfo = obj;
             for ii=1:numConditions
                 var = conditionsCellArray{2*ii-1};
-                condition = conditionsCellArray{2*ii};  
+                condition = conditionsCellArray{2*ii};
                 
-                satisfiers = checkCondition(obj,var,condition);
+                % Checking conditions and getting linked variables.
+                [satisfiers,satisInds,linkedVars,linkedncVars] = checkCondition(partialConditionedRunInfo,var,condition);
                 if isnumeric(satisfiers)
                     outputTable.(var) = convertNumArray2CellString(satisfiers);
+                    %Updating values in partially conditioned object for
+                    %the sake of possible linked variables
+                    if isfield(partialConditionedRunInfo.vars , var)
+                        partialConditionedRunInfo.vars.(var) = satisfiers;
+                    elseif isfield(partialConditionedRunInfo.ncVars , var)
+                        partialConditionedRunInfo.ncVars.(var) = satisfiers;
+                    end
+                    
+                    %Updating linked vars
+                    for cVar2=linkedVars
+                        var2 = cVar2{1};
+                        
+                        valsBefore = partialConditionedRunInfo.vars.(var2);
+                        satisfiers2 = valsBefore(satisInds);
+                        
+                        partialConditionedRunInfo.vars.(var2) = satisfiers2;
+                        outputTable.(var2) = convertNumArray2CellString(satisfiers2);
+                    end
+                    
+                    for cVar2 = linkedncVars
+                        var2 = cVar2{1};
+                        
+                        valsBefore = partialConditionedRunInfo.ncVars.(var2);
+                        satisfiers2 = valsBefore(satisInds);
+                        
+                        partialConditionedRunInfo.ncVars.(var2) = satisfiers2;
+                        outputTable.(var2) = convertNumArray2CellString(satisfiers2);
+                    end
                 else
                     outputTable.(var) = {satisfiers};
                 end
