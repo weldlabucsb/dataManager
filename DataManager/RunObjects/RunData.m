@@ -223,10 +223,8 @@ classdef RunData<RunInfoSubset
                 
                 
                 % Building up the tiff file path for this machine
-                thisTiffFile = obj.DataDir;
-                for jj = yearFolderIndex:length(fileSeparatedName)
-                    thisTiffFile = horzcat(thisTiffFile, filesep, fileSeparatedName{jj});
-                end
+                thisTiffFile = obj.FilePath;
+                thisTiffFile = horzcat(thisTiffFile, filesep, fileSeparatedName{end});
                 tiffFiles{ii} = thisTiffFile;
                 
                 if useROI
