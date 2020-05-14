@@ -217,11 +217,6 @@ classdef RunData<RunInfoSubset
                     error(['Was not able to separate the ' type ' tiff file by file separators for run ' obj.RunID])
                 end
                 
-                %Gets the split file cell position that has the year folder
-                %for the data
-                yearFolderIndex = find(strcmp(fileSeparatedName,num2str(obj.Year)));
-                
-                
                 % Building up the tiff file path for this machine
                 thisTiffFile = obj.FilePath;
                 thisTiffFile = horzcat(thisTiffFile, filesep, fileSeparatedName{end});
