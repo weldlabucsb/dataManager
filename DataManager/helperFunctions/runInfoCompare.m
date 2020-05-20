@@ -48,7 +48,11 @@ function [isSameRunInfo,differingElem] = runInfoCompare(runInfo1,runInfo2)
         end
         sortedRI1Prop = sort(runInfo1.vars.(prop));
         sortedRI2Prop = sort(runInfo2.vars.(prop));
-        tol = 10^(-8);
+        if mean(abs(sortedRI1Prop))>10^(-8)
+            tol = mean(abs(sortedRI1Prop))*10^(-3);
+        else
+            tol = 10^(-9); 
+        end
         if any(abs(sortedRI1Prop-sortedRI2Prop)>tol)
             isSameRunInfo = false;
             differingElem = [prop,'; in vars'];
@@ -76,7 +80,11 @@ function [isSameRunInfo,differingElem] = runInfoCompare(runInfo1,runInfo2)
         end
         sortedRI1Prop = sort(runInfo1.ncVars.(prop));
         sortedRI2Prop = sort(runInfo2.ncVars.(prop));
-        tol = 10^(-8);
+        if mean(abs(sortedRI1Prop))>10^(-8)
+            tol = mean(abs(sortedRI1Prop))*10^(-3);
+        else
+            tol = 10^(-9); 
+        end
         if any(abs(sortedRI1Prop-sortedRI2Prop)>tol)
             isSameRunInfo = false;
             differingElem = [prop,'; in ncVars'];
