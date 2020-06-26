@@ -1,3 +1,5 @@
+function ConstructRunList
+
 %Author: Max Prichard
 %Date: 6/26/2020
 
@@ -17,26 +19,37 @@
 starting_directory = "F:\StrontiumData";
 
 %get the start and end directory TO THE DAY
-% initialDir = uigetdir(starting_directory,'Please choose initial data folder');
-% finalDir = uigetdir(starting_directory,'Please choose final data folder');
+% initialDir = uigetdir(starting_directory,'Please choose initial data day folder');
+% finalDir = uigetdir(starting_directory,'Please choose final data day folder');
 
+%%%%%%%%%%%%%% for testing purposes %%%%%%%%%%%
 initialDir = 'F:\StrontiumData\2019\2019.12\12.16';
-finalDir = 'F:\StrontiumData\2019\2019.12\12.24';
+finalDir = 'F:\StrontiumData\2020\2020.01\01.12';
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%extract start and end year and month and day
-initYear = str2num(initialDir(length(initialDir)-12:length(initialDir)-9));
-initMonth = str2num(initialDir(length(initialDir)-4:length(initialDir)-3));
-initDay = str2num(initialDir(length(initialDir)-1:length(initialDir)));
-
-finYear = str2num(finalDir(length(finalDir)-12:length(finalDir)-9));
-finMonth = str2num(finalDir(length(finalDir)-4:length(finalDir)-3));
-finDay = str2num(finalDir(length(finalDir)-1:length(finalDir)));
-
-%make datestr object MATLAB (nice because doing +1 increments the day
+%get datestr object MATLAB (nice because doing +1 increments the day
 %without having to worry about getting months and years right)
-tInit = datetime(initYear,initMonth,initDay);
-tFin = datetime(finYear,finMonth,finDay);
+tInit = getDatestr(initialDir);
+tFin = getDatestr(finalDir);
 
-%then, start making the CSV file for the runs that you want to keep. 
+%For each day get the collection of runs in that folder
+Tarray = tInit:tFin;
 
+for i = Tarray
+end
+
+
+
+    function [datestr] = getDatestr(directory) 
+        %extract the matlab datestring object from the starting
+        %directories. NOTE: Relies on the current datescheme we have in the
+        %citadel. Like so: F:\StrontiumData\2019\2019.12\12.16
+        Year = str2num(directory(length(directory)-12:length(directory)-9));
+        Month = str2num(directory(length(directory)-4:length(directory)-3));
+        Day = str2num(directory(length(directory)-1:length(directory)));
+        
+        datestr = datetime(Year,Month,Day);
+    end
+
+end
