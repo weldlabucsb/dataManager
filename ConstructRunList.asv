@@ -17,24 +17,23 @@ function ConstructRunList
 %starting_directory = "{your drive letter here}:\{Lithium Data __or__
 %Strontium Data}"
 %SHOULD BE LITHIUM OR STRONTIUM DATA, eg:
-% starting_directory = 'F:\StrontiumData';
-starting_directory = uigetdir('.','Please choose StrontiumData or LithiumData directory on your system.');
+starting_directory = 'F:\StrontiumData';
+% starting_directory = uigetdir('.','Please choose StrontiumData or LithiumData directory on your system.');
 
 %Extract whether it was lithium or strontium data for use later. Need to
-%make sure that there aren't any reserved characters here or it will cause
-%problems down the line when we save the csv file
-indices = find(starting_directory == '\' | starting_directory == '.');
-starting_dir_name = starting_directory(indices(end)+1:end);
+%make sure that there aren't any escape characters here or it will cause
+%problems down the line. 
+indices = find(starting_directory == '
 
 %get the start and end directory TO THE DAY. If you want to do a certain
 %month range, then go into that month's folder and choose the first day
 %folder that is in it. 
-initialDir = uigetdir(starting_directory,'Please choose initial data day folder');
-finalDir = uigetdir(starting_directory,'Please choose final data day folder');
+% initialDir = uigetdir(starting_directory,'Please choose initial data day folder');
+% finalDir = uigetdir(starting_directory,'Please choose final data day folder');
 
 % %%%%%%%%%%%%%% for testing purposes %%%%%%%%%%%
-% initialDir = 'F:\StrontiumData\2020\2020.03\03.07';
-% finalDir = 'F:\StrontiumData\2020\2020.03\03.15';
+initialDir = 'F:\StrontiumData\2020\2020.03\03.07';
+finalDir = 'F:\StrontiumData\2020\2020.03\03.15';
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -62,14 +61,9 @@ for ii = Tarray
     s = size(run_titles);
     run_titles(s(1)+1,1:(length(subdirs)+1)) = string([getDirectory(ii,starting_directory) string({subdirs.name})]);
 end
-% keyboard
-% writematrix(run_titles',strcat('.\',starting_dir_name,'_',string(tInit),'_',string(tFin),'_','runtitles.csv'));
+keyboard
+writematrix(run_titles',strcat('.\',starting_directory,string(tInit),string(tFin),'runtitles.csv'));
 
-%now to check for the MEGAKD tag that usually shows the kicked atom
-%experiments. 
-
-log_mat = contains(run_titles,'MEGAKD');
-keyboard;
 
 end
 
