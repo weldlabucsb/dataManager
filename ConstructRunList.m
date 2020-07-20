@@ -18,23 +18,26 @@ function ConstructRunList
 %Strontium Data}"
 %SHOULD BE LITHIUM OR STRONTIUM DATA, eg:
 % starting_directory = 'F:\StrontiumData';
-starting_directory = uigetdir('.','Please choose StrontiumData or LithiumData directory on your system.');
+starting_directory = 'G:\LithiumData';
+% starting_directory = uigetdir('.','Please choose StrontiumData or LithiumData directory on your system.');
 
 %Extract whether it was lithium or strontium data for use later. Need to
 %make sure that there aren't any reserved characters here or it will cause
 %problems down the line when we save the csv file
-indices = find(starting_directory == '\' | starting_directory == '.');
+indices = find(starting_directory == filesep | starting_directory == '.');
 starting_dir_name = starting_directory(indices(end)+1:end);
 
 %get the start and end directory TO THE DAY. If you want to do a certain
 %month range, then go into that month's folder and choose the first day
 %folder that is in it. 
-initialDir = uigetdir(starting_directory,'Please choose initial data day folder');
-finalDir = uigetdir(starting_directory,'Please choose final data day folder');
+% initialDir = uigetdir(starting_directory,'Please choose initial data day folder');
+% finalDir = uigetdir(starting_directory,'Please choose final data day folder');
 
 % %%%%%%%%%%%%%% for testing purposes %%%%%%%%%%%
 % initialDir = 'F:\StrontiumData\2020\2020.03\03.07';
+initialDir = 'G:\LithiumData\2019\2019.11\11.09';
 % finalDir = 'F:\StrontiumData\2020\2020.03\03.15';
+finalDir = 'G:\LithiumData\2020\2020.03\03.22';
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -61,6 +64,7 @@ for ii = Tarray
     %run_titles string array. 
     s = size(run_titles);
     run_titles(s(1)+1,1:(length(subdirs)+1)) = string([getDirectory(ii,starting_directory) string({subdirs.name})]);
+    disp([num2str(100*(find(Tarray==ii)/length(Tarray))) '% Done']);
 end
 % keyboard
 % writematrix(run_titles',strcat('.\',starting_dir_name,'_',string(tInit),'_',string(tFin),'_','runtitles.csv'));
@@ -68,9 +72,15 @@ end
 %now to check for the MEGAKD tag that usually shows the kicked atom
 %experiments. 
 
-log_mat = contains(run_titles,'MEGAKD');
+log_mat = contains(run_titles,'MEGAKD','IgnoreCase',true);
 keyboard;
 
+%then extract only the MEGAKD runs
+megakdruns = run_titles(log_mat);
+
+keyboard;
+%now to try and extract the run data from the folder names 
+rundata = ["Run Title", "Lattice Depth", "T" , "Tau"]; 
 end
 
 function [datestr] = getDatestr(directory) 
@@ -94,5 +104,5 @@ function [directory]  = getDirectory(datein,base_directory)
     d = num2str(day(datein),'%02d');
     
 
-    directory = string([base_directory '\' y '\' y '.' m '\' m '.' d]);
+    directory = string([base_directory filesep y filesep y '.' m filesep m '.' d]);
 end
