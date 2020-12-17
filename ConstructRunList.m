@@ -18,8 +18,9 @@ function ConstructRunList
 %Strontium Data}"
 %SHOULD BE LITHIUM OR STRONTIUM DATA, eg:
 % starting_directory = 'F:\StrontiumData';
-starting_directory = 'G:\StrontiumData';
+% starting_directory = 'G:\StrontiumData';
 % starting_directory = uigetdir('.','Please choose StrontiumData or LithiumData directory on your system.');
+starting_directory = 'X:\StrontiumData\2020';
 
 %Extract whether it was lithium or strontium data for use later. Need to
 %make sure that there aren't any reserved characters here or it will cause
@@ -70,7 +71,7 @@ for ii = Tarray
     run_dates(1:(length(subdirs)+1),s(2)+1) = ii;
     disp([num2str(100*(find(Tarray==ii)/length(Tarray))) '% Done']);
 end
-keyboard
+% keyboard
 
 %If readable = true, then an additional, more human-readable csv is
 %generated with columns of run folders that correspond to the data taken on
@@ -92,7 +93,7 @@ log_ind = ~run_titles.ismissing;
 run_titles = run_titles(log_ind);
 run_dates = run_dates(log_ind);
 %now to put the data in a good format. 
-keyboard;
+% keyboard;
 year_col = year(run_dates);
 month_col = month(run_dates);
 day_col = day(run_dates);
@@ -106,7 +107,7 @@ writematrix(csv_output,strcat('.', filesep ,starting_dir_name,'_',string(tInit),
 %then extract only the MEGAKD runs
 megakdruns = run_titles(contains(run_titles,'MEGAKD','IgnoreCase',true));
 
-keyboard;
+% keyboard;
 %now to try and extract the run data from the folder names 
 rundata = ["Run Title", "Lattice Depth", "T" , "Tau"]; 
 end
