@@ -1,0 +1,315 @@
+01 - live pd
+02 - rm1 tof
+03 - live pd
+04 - live pd after recoupling rempump
+05 - live pd after recoupling slower fiber
+06 - tc adjustment
+01 - live pd
+02 - rm1
+03 - live pd
+04 - live pd oven temp increase
+05 - rm1 tof
+06 - rm1 tof after adjusting red laser
+07 - odt hold tof
+08 - live pd
+09 - rm1 tof
+10 - rm1 vary rm1vvaStart
+11 - live pd after dinner break
+12 - rm1tof
+13 - odt hold tof
+14 - odt repeats tof 2000
+15 - bec vary evap end
+16 - bec tof evap end 0.15
+17 - bec repeats
+01 - live pd
+02 - rm1 tof
+03 - rm1 tof
+04 - rm1 tof lock in a short range
+05 - rm1 tof repeats
+06 - odt hold tof
+07 - odt hold tof 2500 vary mt load
+08 - vary evap end
+09 - vary evap end Load MT 25s
+10 - BEC Repeats for Beam track test
+11 - more bec repeats
+12 - rm1 troubleshoot
+13 - back to bec repeats
+14 - move odt
+15 - odt repeats with fake evap
+16 - xodt pico motor walk BEC tof 9000
+17 - bec xodt pico motor walk ccw tof 9000
+18 - bec tof
+01 - live pd
+02 - rm1 tof
+03 - odt hold tof
+04 - bec vary evap end
+05 - live pd
+06 - odt hold tof
+07 - vary rm1vvaStart looking at ODT
+08 - vart rm2 time looking at ODT
+09 - vary evap end
+10 - vary odt hold looking at bec
+11 - bec tof
+12 - bec tof red relocked
+13 - bec repeats
+14 - more bec repeats
+15 - more bec repeats
+16 - bec repeats after beam shutter repair
+17 - troubleshoot
+18 - rm1 tof
+19 - odt hold tof
+20 - bec tof
+01 - live pd
+02 - rm1 tof
+03 - rm1 tof repeat
+04 - odt hold tof
+05 - bec vary evap end
+06 - bec tof
+07 - bec repeats
+08 - bec more repeats
+09 - bec tof
+10 - try 1064 kd
+11 - odt hold with fake evap
+12 - bec repeats while moving picomoter
+13 - bec tof
+14 - odt hold tof
+15 - odt cw+5 odt hold tof
+16 - odt walk bec
+17 - bec repeats
+18 - bec tof
+19 - XODT pico motor vertical walk
+20 - xodt pico motor vertical walk reverse direction
+21 - xdot pico motor vertical walk rereverse
+22 - xdot pico motor vertical walk reverse
+23 - odt hold tof
+24 - bec tof
+25 - bec tof repeats
+26 - xodt vertical walk looking at bec
+27 - bec repeats while walking xodt vertical
+28 - bec tof
+29 - vary evap end
+30 - bec repeats
+01 - LivePD
+02 - RM1 TOF
+03 - ODT Hold TOF
+04 - ODT Hold TOF - again because 2000us tofs low
+05 - BEC -  Vary evap end
+06 - Laser Died
+07 - BEC repeats at 0.16 evap end
+08 - more bec repeats
+09 - bec repeats
+10 - vary evap end
+11 - bec tof at 0.16
+12 - try 1064 kd
+13 - kd repeats
+14 - try kd at new position
+15 - kd 1064
+16 - bec tof
+17 - bec tof
+18 - bec tof
+19 - bec tof - moving xodt vert -5 ste[
+20 - bec repeats 11000us tof - moved xodt vert +10 step
+21 - bec repeats 11000us tof - moved xodt vert +10 steps more
+22 - bec repeats 11000us tof - moved xodt vert back -30 steps
+23 - bec repeats 11000us tof - moved xode vert -10 steps
+24 - bec repeats 11000us tof - moved xode vert -20 steps
+25 - bec repeats 11000us tof - moved xodt back positive
+26 - bec repeats 11000us tof - moving XODT poisition back to start -- based on camera monitoring
+27 - bec repeats 11000us tof - moving XODT poisition back to start -- 2nd attempt
+28 - bec repeats 11000us tof - moving XODT poisition back to start -- almost same as previous
+29 - bec tof
+30 - bec repeats
+31 - bec reoeats XODT vertical walk
+32 - troubleshoot - odt hold tof
+33 - bec tof
+34 - bec tof
+35 - bec tof
+36 - bec repeats tof 11000
+37 - live pd
+38 - rm1 tof
+39 - live pd
+40 - live pd after zs pming
+01 - live pd
+02 - rm1 tof
+03 - odt hold
+04 - vary evap end
+05 - evap end 0.16 tof
+06 - vary load MT moonitor bec
+07 - bec repeats
+08 - bec repeats continued
+09 - BEC TOF
+10 - START LATTICE ALIGNMENT TO BEC
+11 - Switch to side imaging
+12 - Image BEC in situ to get position
+13 - Switched back to vertical
+14 - 1064KD
+15 - 1064 Lattice Amplitude Modulation at 10Er
+16 - Repeats for food break
+17 - 1064 Lattice Amplitude Modulation at 10Er
+18 - 915KD - mistake
+19 - 915KD - no power getting to atoms
+20 - 915KD - moved 403 fiber
+21 - switched back to 915 pid
+22 - Take expansion data
+23 - 1064 10Er 915 0.5Er vary lattice hold
+24 - 1064 10Er 915 0.5Er vary lattice hold - Repeat 23
+25 - 1064 10Er 915 0.5Er - vary lattice hold - Combo 23 and 24
+26 - 1064 10Er 915 0.1Er vary lattice hold
+27 - 1064 10Er 915 0.1Er vary lattice hold - repeat 26
+28 - 1064 10Er 915 0.1Er vary lattice hold - combo 26 and 27
+29 - 1064 10Er 915 0.02Er vary lattice hold
+30 - 1064 10Er 915 0.02Er vary lattice hold - repeat 29
+31 - 1064 10Er 915 0.02Er vary lattice hold - combo 29 and 30
+32 - 1064 15Er 915 0.5Er vary lattice hold
+33 - 1064 10Er 915 0.5Er vary lattice hold - 5 repeats
+34 - 1064 8.5Er 915 1Er vary lattice hold - 5 repeats
+35 - 1064 15Er 915 0.5Er vary lattice hold - 5 repeats
+36 - 1064 8.5Er 915 1Er vary lattice hold - no repeats
+37 - bec with vary bechold
+38 -  vary bec hold fine
+39 - 1064 8.5Er 915 1Er vary lattice hold after bechold 2s - 5 repeats blue died in the middle
+40 - repeat of 39 1064 8.5Er 915 1Er vary lattice hold after bechold 2s - 5 repeats
+41 - 1064 8.5Er 915 1Er vary lattice hold after bechold 1s - 5 repeats
+01 - livePD
+02 - RM1 TOF
+03 - relocked red and blue
+04 - RM1 TOF
+05 - ODT Hold TOF
+06 - BEC - vary evap end
+07 - BEC TOF - evap end at 0.16
+08 - BEC repeats
+09 - BEC repeats - pt 2
+10 - LogtimeTest
+11 - BEC repeats - pt 3
+12 - Try move XODT Vertical
+13 - Try to move XODT more
+14 - BEC TOF
+15 - RM1 TOF
+16 - Try to play with red lock
+17 - accidentally turned off laser current
+18 - Try RM1 TOF
+19 - Lower red laser current even more
+20 - RM1 TOF
+21 - Lowered Red current more
+22 - RM1 TOF
+23 - Set the red current high
+24 - RM1 TOF
+25 - LivePD
+26 - livePD
+01 - LivePD
+02 - RM1 TOF
+03 - ODTHold TOF
+04 - Removing Old TC Optics
+05 - LivePD while removing TC optics
+06 - RM1 tof
+07 - Routed BNC cables for trigger
+08 - RM1 TOF
+09 - Live PD
+10 - LivePD
+11 - RM1 TOF
+12 - relocked red -- added trigger to sequence
+13 - RM1 TOF
+14 - ODT Hold TOF
+15 - ODT Hold - again - added ODT trigger to sequence
+16 -BEC - vary evap end
+17 - copy of 16 bc of BEC issue
+18 - BEC TOF at 0.16 evap end
+19 - 1064 8.5Er  915 1Er - Vary Lattice Hold - no KD
+01 - live pd
+02 - rm1 tof
+03 - rm1 tof repeat
+04 - odt hold tof
+05 - odt hold tof clock problem again
+06 - vary evap end
+07 - bec tof
+08 - bec repeats
+01 - LivePD - no MOT
+02 - LivePD
+03 - redMOT-1 Check
+04 - ODT hold
+05 - BEC vary Evap
+06 - BEC TOF bad repump mode
+07 - BEC TOF
+08 - BEC repeat - laser died early on
+09 - BEC Repeats
+10- BEC Repeats 2 - maybe bad bc repump bad
+11 - FIXING REPUMP
+12 - More BEC Repeats
+13 - odt hold tof
+14 - rm1 tof
+15 - rm1 tof
+16 - live pd
+17 - rm1 tof
+18 - odt hold tof
+19 - bec tof
+20 - bec repeats
+21 - bec tof
+22 - 1064 kd
+23 - 915 kd
+24 - 1064 kd repeats
+25 - 1 more 1064 kd
+26 - 1064 10Er AM
+27 - 1064 8.5Er vary 915 tof 5000ms odt snapoff higher values
+27_   --prep 1064 8.5Er vary 915 tof 5000ms odt snapoff
+28 - 1064 10Er vary 915 tof 5000ms odt snapoff higher values
+29 - 1064 12Er vary 915 tof 5000ms odt snapoff higher values
+30 - 1064 14.5Er vary 915 tof 5000ms odt snapoff higher values
+31 - 1064 18Er vary 915 tof 5000ms odt snapoff higher values
+32 - 1064 14.5Er vary 915 tof 5000ms odt snapoff longer list
+01 - LivePD
+02 - Using BIFROST wavemeter
+03 - LivePD
+04 - RM1 TOF
+05 - ODT Hold TOF
+06 - BEC - vary evapend
+07 - BEC TOF - set evap end to 0.16
+08 - BEC Repeats
+09 - Laser failed again - restart
+10 - BEC Repeats
+11 - BEC repeats 2
+12 - bec repeats 3
+13 - bec tof
+14 - 1064 8.5Er vary 915 tof 5000ms odt snapoff
+15 - redo 14 after fixing PID - 1064 8.5Er vary 915 tof 5000ms odt snapoff
+16 - pzt implementation test
+17 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 3V 5-50Hz
+18 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 0V 5-50Hz
+19 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 1V 5-50Hz
+20 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 0.5V 5-50Hz
+21 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 0.25V 5-50Hz
+22 - XXXXXXXXXXXXXXX all the data so far is garbage because there was bandmap
+23 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 0V 5-50Hz
+24 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 1V 5-50Hz
+25 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 0.5V 5-50Hz
+26 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 0.25V 5-50Hz
+27 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 0.1V 5-50Hz
+28 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V 50Hz fixed vary PZT amp
+29 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V 30Hz fixed vary PZT amp
+30 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V 10Hz fixed vary PZT amp
+31 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V 3Hz fixed vary PZT amp
+32 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 0.1 50Hz fixed vary lattice hold
+33 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 0.5 50Hz fixed vary lattice hold
+34 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 1 50Hz fixed vary lattice hold
+35 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 0.5 30Hz fixed vary lattice hold
+36 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 0.5 10Hz fixed vary lattice hold
+37 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 3V amp 0.5 3Hz fixed vary lattice hold
+38 - XXXXXXXXXXXXXXX oops I was doing 915 0.5Er. Switching to 0.2Er
+39 - 1064 8.5Er 915 0.2Er lattice hold 5000ms PZT offset 3V amp 0.5V 5-50Hz
+40 - 1064 8.5Er 915 0.2Er lattice hold 5000ms PZT offset 3V amp 1V 5-50Hz
+41 - 1064 8.5Er 915 0.2Er lattice hold 5000ms PZT offset 3V amp 1.5V 5-50Hz
+42 - 1064 8.5Er 915 0.2Er lattice hold 5000ms PZT offset 3V amp 2V 5-50Hz
+01 - live pd
+02 - rm1 tof
+03 - odt hold tof
+04 - vary evap end
+05 - bec tof evap end 0.16
+06 - bec repeats
+07 - bec repeats 2
+08 - bec repeats 3
+09 - 1064 8.5Er 915 0.2Er lattice hold 5000ms PZT offset 5V amp 4.5V 5-50Hz
+10 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 5V amp 4.5V 1-50Hz
+11 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 5V amp 3V 1-50Hz
+12 - 1064 8.5Er 915 0.5Er lattice hold 5000ms PZT offset 5V amp 1.5V 1-50Hz
+13 - 1064 8.5Er 915 0.5Er AM spec 1-50Hz mod time 5000ms  mod amp 0.25
+14 - 1064 8.5Er 915 0.5Er AM spec 1-50Hz mod time 5000ms  mod amp 0.25 bm
+15 - 1064 8.5Er 915 0.5Er AM spec 1-50Hz mod time 1000ms  mod amp 0.05 bm

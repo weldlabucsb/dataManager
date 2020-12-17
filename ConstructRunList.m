@@ -18,7 +18,7 @@ function ConstructRunList
 %Strontium Data}"
 %SHOULD BE LITHIUM OR STRONTIUM DATA, eg:
 % starting_directory = 'F:\StrontiumData';
-starting_directory = 'G:\LithiumData';
+starting_directory = 'G:\StrontiumData';
 % starting_directory = uigetdir('.','Please choose StrontiumData or LithiumData directory on your system.');
 
 %Extract whether it was lithium or strontium data for use later. Need to
@@ -30,14 +30,15 @@ starting_dir_name = starting_directory(indices(end)+1:end);
 %get the start and end directory TO THE DAY. If you want to do a certain
 %month range, then go into that month's folder and choose the first day
 %folder that is in it. 
-% initialDir = uigetdir(starting_directory,'Please choose initial data day folder');
-% finalDir = uigetdir(starting_directory,'Please choose final data day folder');
+initialDir = uigetdir(starting_directory,'Please choose initial data day folder');
+finalDir = uigetdir(starting_directory,'Please choose final data day folder');
 
 % %%%%%%%%%%%%%% for testing purposes %%%%%%%%%%%
 % initialDir = 'F:\StrontiumData\2020\2020.03\03.07';
-initialDir = 'G:\LithiumData\2019\2019.11\11.09';
+% initialDir = 'G:\LithiumData\2019\2019.11\11.09';
 % finalDir = 'F:\StrontiumData\2020\2020.03\03.15';
-finalDir = 'G:\LithiumData\2020\2020.03\03.22';
+% finalDir = 'G:\LithiumData\2019\2019.11\11.14';
+% finalDir = 'G:\LithiumData\2020\2020.03\03.22';
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -49,6 +50,7 @@ tFin = getDatestr(finalDir);
 %For each day get the collection of runs in that folder
 Tarray = tInit:tFin;
 run_titles = string([]);
+run_dates = NaT(0);
 for ii = Tarray
     %getting all of the files and subdirectories that are part of the
     %current directory
@@ -63,20 +65,46 @@ for ii = Tarray
     %character arrays aren't concatenated before they are written into the
     %run_titles string array. 
     s = size(run_titles);
-    run_titles(s(1)+1,1:(length(subdirs)+1)) = string([getDirectory(ii,starting_directory) string({subdirs.name})]);
+%     keyboard;
+    run_titles(1:(length(subdirs)+1),s(2)+1) = string([getDirectory(ii,starting_directory) string({subdirs.name})]);
+    run_dates(1:(length(subdirs)+1),s(2)+1) = ii;
     disp([num2str(100*(find(Tarray==ii)/length(Tarray))) '% Done']);
 end
-% keyboard
-% writematrix(run_titles',strcat('.\',starting_dir_name,'_',string(tInit),'_',string(tFin),'_','runtitles.csv'));
+keyboard
 
-%now to check for the MEGAKD tag that usually shows the kicked atom
-%experiments. 
+%If readable = true, then an additional, more human-readable csv is
+%generated with columns of run folders that correspond to the data taken on
+%a specific day. This is more useful for very large sets of data where a
+%single column would be more difficult to parse.
+readable = true;
+if (readable)
+    writematrix(run_titles,strcat('.', filesep ,starting_dir_name,'_',string(tInit),'_',string(tFin),'_','runtitlesREADABLE.csv'));
+end
 
-log_mat = contains(run_titles,'MEGAKD','IgnoreCase',true);
+%for compatibility with the rest of datamanager, now I will remove the
+%month folders from the list since they do not contain any data. This is
+%the first column.
+run_titles = run_titles(2:end,1:end);
+run_dates = run_dates(2:end,1:end);
+%remove missing entries (these are there since not all days have the same
+%amount of runs taken.
+log_ind = ~run_titles.ismissing;
+run_titles = run_titles(log_ind);
+run_dates = run_dates(log_ind);
+%now to put the data in a good format. 
 keyboard;
+year_col = year(run_dates);
+month_col = month(run_dates);
+day_col = day(run_dates);
+comments = strings(size(run_titles));
+seriesID = strings(size(run_titles));
+runType = strings(size(run_titles));
 
+csv_output = [["Year";year_col] ["Month";month_col] ["Day";day_col] ["SeriesID";seriesID] ["RunType";runType] ["RunFolder";run_titles]];
+%save the output in datamanager format
+writematrix(csv_output,strcat('.', filesep ,starting_dir_name,'_',string(tInit),'_',string(tFin),'_','runtitles.csv'));
 %then extract only the MEGAKD runs
-megakdruns = run_titles(log_mat);
+megakdruns = run_titles(contains(run_titles,'MEGAKD','IgnoreCase',true));
 
 keyboard;
 %now to try and extract the run data from the folder names 
