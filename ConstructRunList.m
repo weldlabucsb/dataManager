@@ -21,8 +21,8 @@ function ConstructRunList
 % starting_directory = 'G:\StrontiumData';
 % starting_directory = uigetdir('.','Please choose StrontiumData or LithiumData directory on your system.');
 starting_directory = 'X:\StrontiumData\2020';
-
-csv_output_dir = uigetdir('G:\My Drive\_WeldLab\Code\Analysis\quasicrystal_transport_v2\_data_loading');
+csv_output_dir = uigetdir('G:\My Drive\_WeldLab\Code\Analysis\quasicrystal_transport_v2\_data_loading','Choose where you want to save the output.');
+csv_output_dir = [csv_output_dir filesep];
 
 %Extract whether it was lithium or strontium data for use later. Need to
 %make sure that there aren't any reserved characters here or it will cause
@@ -75,13 +75,15 @@ for ii = Tarray
 end
 % keyboard
 
+csv_out_path = strcat(csv_output_dir,'_',string(tInit),'_',string(tFin),'_','runtitles.csv');
+
 %If readable = true, then an additional, more human-readable csv is
 %generated with columns of run folders that correspond to the data taken on
 %a specific day. This is more useful for very large sets of data where a
 %single column would be more difficult to parse.
 readable = true;
 if (readable)
-    writematrix(run_titles,strcat('.', filesep ,csv_output_dir,'_',string(tInit),'_',string(tFin),'_','runtitlesREADABLE.csv'));
+    writematrix(run_titles,csv_out_path);
 end
 
 %for compatibility with the rest of datamanager, now I will remove the
@@ -105,13 +107,16 @@ runType = strings(size(run_titles));
 
 csv_output = [["Year";year_col] ["Month";month_col] ["Day";day_col] ["SeriesID";seriesID] ["RunType";runType] ["RunFolder";run_titles]];
 %save the output in datamanager format
-writematrix(csv_output,strcat('.', filesep ,csv_output_dir,'_',string(tInit),'_',string(tFin),'_','runtitles.csv'));
+writematrix(csv_output,csv_out_path);
 %then extract only the MEGAKD runs
 megakdruns = run_titles(contains(run_titles,'MEGAKD','IgnoreCase',true));
 
 % keyboard;
 %now to try and extract the run data from the folder names 
 rundata = ["Run Title", "Lattice Depth", "T" , "Tau"]; 
+
+winopen(csv_output_dir);
+
 end
 
 function [datestr] = getDatestr(directory) 
