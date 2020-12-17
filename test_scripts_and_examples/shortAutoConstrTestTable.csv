@@ -1,0 +1,9 @@
+﻿Year,Month,Day,SeriesID,RunType,RunFolder,KDCal915,ImagingPowerVVA,Comments
+2020,3,17,A,Disorder,16 - 1064 15Er Vary 915 Er Lattice hold 1000ms in situ img smaller range,0.434,530,This was our initial localization measurement test.; The harmonic;confinement was too weak to hold the atoms at lattice;depths below 15Er (until reflected ratio was lowered);Lower (normal) imaging beam power;NOTE; Later found issue that the -0.1V initial setpoint causes a 100ms delay on the lattice rampup;NOTE; Not sure what the ramp up time was (know it was < 250ms)
+2020,3,17,A,Disorder,17 - 1064 15 Er Vary 915 Er lattice hold 5000ms in situ img no bm,0.434,530,Changed amount of harmonic confinement to get below ;Lower (normal) imaging beam power;NOTE: Later found issue that the -0.1V initial setpoint causes a 100ms delay on the lattice rampup;NOTE: Not sure what the ramp up time was (know it was < 250ms)
+2020,3,17,A,Disorder,18 - 1064 15 Er Vary 915 Er lattice hold 10000ms in situ img no BM,0.434,530,Changed amount of harmonic confinement to get below ;Lower (normal) imaging beam power;NOTE: Later found issue that the -0.1V initial setpoint causes a 100ms delay on the lattice rampup;NOTE: Not sure what the ramp up time was (know it was < 250ms)
+2020,3,18,B,Expansion,22 -  1064 10Er 915 0.1Er vary lattice hold try odt snap off repeats,0.3972,530,
+2020,3,18,B,Expansion,21 -  1064 10Er 915 0.5Er vary lattice hold try odt snap off repeats,0.3972,530,
+2020,3,18,C,Expansion,26 -  1064 10Er 915 0.02Er vary lattice hold try odt snap off repeats img vva 780,0.3972,780,
+2020,3,18,C,Expansion,25 -  1064 10Er 915 0.1Er vary lattice hold try odt snap off repeats img vva 780,0.3972,780,
+2020,3,18,C,Expansion,24 -  1064 10Er 915 0.5Er vary lattice hold try odt snap off repeats img vva 780,0.3972,780,
