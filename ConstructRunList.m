@@ -20,7 +20,7 @@ function ConstructRunList
 % starting_directory = 'F:\StrontiumData';
 % starting_directory = 'G:\StrontiumData';
 % starting_directory = uigetdir('.','Please choose StrontiumData or LithiumData directory on your system.');
-starting_directory = 'X:\StrontiumData\2020';
+starting_directory = 'X:\StrontiumData';
 csv_output_dir = uigetdir('G:\My Drive\_WeldLab\Code\Analysis\quasicrystal_transport_v2\_data_loading','Choose where you want to save the output.');
 csv_output_dir = [csv_output_dir filesep];
 
@@ -109,11 +109,11 @@ csv_output = [["Year";year_col] ["Month";month_col] ["Day";day_col] ["SeriesID";
 %save the output in datamanager format
 writematrix(csv_output,csv_out_path);
 %then extract only the MEGAKD runs
-megakdruns = run_titles(contains(run_titles,'MEGAKD','IgnoreCase',true));
+% megakdruns = run_titles(contains(run_titles,'MEGAKD','IgnoreCase',true));
 
 % keyboard;
 %now to try and extract the run data from the folder names 
-rundata = ["Run Title", "Lattice Depth", "T" , "Tau"]; 
+% rundata = ["Run Title", "Lattice Depth", "T" , "Tau"]; 
 
 winopen(csv_output_dir);
 
