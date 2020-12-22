@@ -30,13 +30,13 @@ starting_dir_name = starting_directory(indices(end)+1:end);
 %get the start and end directory TO THE DAY. If you want to do a certain
 %month range, then go into that month's folder and choose the first day
 %folder that is in it. 
-initialDir = uigetdir(starting_directory,'Please choose initial data day folder');
-finalDir = uigetdir(starting_directory,'Please choose final data day folder');
+% initialDir = uigetdir(starting_directory,'Please choose initial data day folder');
+% finalDir = uigetdir(starting_directory,'Please choose final data day folder');
 
 % %%%%%%%%%%%%%% for testing purposes %%%%%%%%%%%
-% initialDir = 'F:\StrontiumData\2020\2020.03\03.07';
+initialDir = 'G:\StrontiumData\2020\2020.11';
 % initialDir = 'G:\LithiumData\2019\2019.11\11.09';
-% finalDir = 'F:\StrontiumData\2020\2020.03\03.15';
+finalDir = 'G:\StrontiumData\2020\2020.12\12.15';
 % finalDir = 'G:\LithiumData\2019\2019.11\11.14';
 % finalDir = 'G:\LithiumData\2020\2020.03\03.22';
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,10 +105,6 @@ csv_output = [["Year";year_col] ["Month";month_col] ["Day";day_col] ["SeriesID";
 writematrix(csv_output,strcat('.', filesep ,starting_dir_name,'_',string(tInit),'_',string(tFin),'_','runtitles.csv'));
 %then extract only the MEGAKD runs
 megakdruns = run_titles(contains(run_titles,'MEGAKD','IgnoreCase',true));
-
-keyboard;
-%now to try and extract the run data from the folder names 
-rundata = ["Run Title", "Lattice Depth", "T" , "Tau"]; 
 end
 
 function [datestr] = getDatestr(directory) 
