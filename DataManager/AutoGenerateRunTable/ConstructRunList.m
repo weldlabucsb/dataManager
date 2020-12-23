@@ -2,6 +2,8 @@ function ConstructRunList
 
 %Author: Max Prichard
 %Date: 6/26/2020
+%NOTE: THIS FUNCTION HAS BEEN SUPERSEDED by auto_library_generator app
+
 
 % The purpose of this is to have someone only select the first and last
 % files that they want to be included in a .csv file that lists relevant
