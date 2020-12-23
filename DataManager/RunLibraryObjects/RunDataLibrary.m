@@ -261,7 +261,7 @@ classdef RunDataLibrary<LibraryCatalog
                     end
                 end
                 if length(fieldnames(obj.RunDatas{ii}.Atomdata(1).vars))<length(allVars)
-                    addedVars = setdiff(allVars , obj.RunDatas{ii}.Atomdata(1).vars);
+                    addedVars = setdiff(allVars , fieldnames(obj.RunDatas{ii}.Atomdata(1).vars));
                     if size(addedVars,1)~=1
                         addedVars = transpose(addedVars);
                     end
