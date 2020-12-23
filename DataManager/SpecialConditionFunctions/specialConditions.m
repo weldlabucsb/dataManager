@@ -13,31 +13,33 @@ satisAD = [];
 
 switch var
     case {'VVA915_Er'}
-        %A special condition because the KD915 calibration was wrong in
-        %Cicero by a factor of 1.25 for several runs
-        isSC=true;
+%         A special condition because the KD915 calibration was wrong in
+%         Cicero by a factor of 1.25 for several runs
+        if isfield(runInfo.ncVars,'KDCal915')
+            isSC=true;
 
-        desiredVals = runInfo.vars.VVA915_Er;
-        
-        adVars = [atomdata.vars];
-        %Determining real atomdata VVA915_Er values with a corrected
-        %calibration that is stored in runInfo
-        atomdataVals = [adVars.Lattice915VVA]*(runInfo.ncVars.KDCal915);
-        
-        tol = 5*10^(-3);
-        satisAD = false(size(atomdataVals));
-        for ii=1:length(desiredVals)
-            satisThisVal = abs(atomdataVals-desiredVals(ii))<tol;
-            satisAD = satisAD|satisThisVal;
+            desiredVals = runInfo.vars.VVA915_Er;
+
+            adVars = [atomdata.vars];
+%             Determining real atomdata VVA915_Er values with a corrected
+%             calibration that is stored in runInfo
+            atomdataVals = [adVars.Lattice915VVA]*(runInfo.ncVars.KDCal915);
+
+            tol = 5*10^(-3);
+            satisAD = false(size(atomdataVals));
+            for ii=1:length(desiredVals)
+                satisThisVal = abs(atomdataVals-desiredVals(ii))<tol;
+                satisAD = satisAD|satisThisVal;
+            end
+
+            if all(~satisAD)
+                disp([runInfo.RunID ' BY VAR ' var])
+                disp('desiredVals')
+                disp(desiredVals)
+                disp('atomdataVals')
+                disp(atomdataVals)
+            end
         end
-        
-%         if all(~satisAD)
-%             disp([runInfo.RunID ' BY VAR ' var])
-%             disp('desiredVals')
-%             disp(desiredVals)
-%             disp('atomdataVals')
-%             disp(atomdataVals)
-%         end
 end
 
 

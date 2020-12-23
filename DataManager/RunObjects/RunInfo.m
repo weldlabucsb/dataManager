@@ -66,8 +66,17 @@ classdef RunInfo
             obj.Month = tabUnpackNum(CSVTableLine.Month);
             obj.Day = tabUnpackNum(CSVTableLine.Day);
             
-            obj.SeriesID = tabUnpackChar(CSVTableLine.SeriesID);
-            obj.RunType = tabUnpackChar(CSVTableLine.RunType);
+            if any(strcmp(CSVTableLine.Properties.VariableNames,'SeriesID'))
+                obj.SeriesID = tabUnpackChar(CSVTableLine.SeriesID);
+            else
+                obj.SeriesID = '';
+            end
+            
+            if any(strcmp(CSVTableLine.Properties.VariableNames,'RunType'))
+                obj.RunType = tabUnpackChar(CSVTableLine.RunType);
+            else
+                obj.RunType = '';
+            end
             
             obj.RunFolder = tabUnpackChar(CSVTableLine.RunFolder);
             
@@ -151,8 +160,17 @@ classdef RunInfo
             obj.Month = tabUnpackNum(CSVTableLine.Month);
             obj.Day = tabUnpackNum(CSVTableLine.Day);
             
-            obj.SeriesID = tabUnpackChar(CSVTableLine.SeriesID);
-            obj.RunType = tabUnpackChar(CSVTableLine.RunType);
+            if any(strcmp(CSVTableLine.Properties.VariableNames,'SeriesID'))
+                obj.SeriesID = tabUnpackChar(CSVTableLine.SeriesID);
+            else
+                obj.SeriesID = '';
+            end
+            
+            if any(strcmp(CSVTableLine.Properties.VariableNames,'RunType'))
+                obj.RunType = tabUnpackChar(CSVTableLine.RunType);
+            else
+                obj.RunType = '';
+            end
             
             obj.RunFolder = tabUnpackChar(CSVTableLine.RunFolder);
             
@@ -349,8 +367,16 @@ classdef RunInfo
             outputTable.Year = num2str(obj.Year);
             outputTable.Month = num2str(obj.Month);
             outputTable.Day = num2str(obj.Day);
-            outputTable.SeriesID = obj.SeriesID;
-            outputTable.RunType = obj.RunType;
+            if ~isempty(obj.SeriesID)
+                outputTable.SeriesID = obj.SeriesID;
+            else
+                outputTable.SeriesID = cell(1,1);
+            end
+            if ~isempty(obj.RunType)
+                outputTable.RunType = obj.RunType;
+            else
+                outputTable.RunType = cell(1,1);
+            end
             outputTable.RunFolder = obj.RunFolder;
             
             if ~isempty(fieldnames(obj.vars))
@@ -516,10 +542,17 @@ function [runID] = makeRunID(year,month,day,seriesID,runType,runNumber)
     
     runID = [cYear '_'...
         cMonth '_'... 
-        cDay '_'...
-        'Series' seriesID '_'...
-        runType '_'...
-        'Run-' runNumber];
+        cDay];
+    
+    if ~isempty(seriesID)
+        runID = horzcat(runID,'_','Series', seriesID);
+    end
+    
+    if ~isempty(runType)
+        runID = horzcat(runID,'_', runType);
+    end
+    
+    runID = horzcat(runID,'_','Run-', runNumber);
 end
 
 
