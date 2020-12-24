@@ -179,10 +179,10 @@ classdef RunDataLibrary<LibraryCatalog
                 
                 % Get the folder with atomdata.mat in it
                 if (nargin<7)||(isempty(specifiedFolderPath))
-                    checkIfAtomDataExists(runInfo.FilePath)
+                    checkIfAtomDataExists(runInfo.FilePath);
                     folderPath = runInfo.FilePath;
                 else
-                    checkIfAtomDataExists(specifiedFolderPath)
+                    checkIfAtomDataExists(specifiedFolderPath);
                     folderPath = specifiedFolderPath{ii};
                 end
                 
