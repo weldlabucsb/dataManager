@@ -30,7 +30,7 @@ The first thing you need is a runInfoTable. This is a csv which contains rows of
     - SeriesID (can be left blank): A character which labels different types of runs. Arbitrary, but useful for sorting at a glance.
     - RunType (can be left blank): A name for that type of run. Also arbitrary, yet useful for the same reason as SeriesID.
     - RunFolder (wherever atomdata is)
-Take a look at RunInfoTableExample.csv for an example.
+Take a look at AutoConstrTestTable.csv for an example. Ignore the last two columns for now.
 
-Once you have your RunInfoTable, you will feed it (with some optional arguments) to RunDataLibrary.libraryConstruct(). See the section "Autogenerating RunDataLibrary" in ExampleScript.mlx for a detailed look at how this works.
+Once you have your RunInfoTable, you will feed it (with some optional arguments) to RunDataLibrary.libraryConstruct(). See the section "Autogenerating RunDataLibrary" in ExampleScript.mlx for a detailed look at how this works. If all you care about is getting a RunDataLibrary from your table, you can use the __GetRunDatas__ function by calling it from the MatLab command window.
 
