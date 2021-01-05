@@ -8,6 +8,7 @@
     - It is recommended that you __do not change__ the "Include Vars" and "Exclude Vars" fields until you familiarize yourself with how library construction works. See the next section for directions on how to learn about library generation.
     - To allow multiple checkboxes to be checked at once is apparently nontrivial. The workaround to toggle ranges of checkboxes is as follows:
         - Click on the __border__ around the checkbox at the beginning of a range you'd like to select. The box will now be highlighted blue.
+            - Note: clicking the run titles to highlight rows also works, and may be easier.
         - While holding shift, click on the border around the checkbox at the end of the range you'd like to select. The entire range you are trying to select should now be highlighted blue.
         - Click the "Switch All Highlighted Entries" button. This will toggle all of the checkboxes in the selected range to the __opposite value of the first checkbox you clicked__.
 3. Poke around at the structure of the RunDataLibrary, accessing its fields like a struct: myRunDataLib.fieldname. Key notes:
