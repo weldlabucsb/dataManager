@@ -80,27 +80,25 @@ classdef RunData<RunInfoSubset
                     % not present in subset of RunDatas. To revert: remove
                     % if/else statment, replace warning with
                     % assert(isfield(advars,cicVar),'error message').
-                    if ~isfield(adVars,cicVar)
-                        warning(['The variable ' cicVar ' is not a variable stored in atomdata.  Maybe you want to specify it as a noncicero variable in ncVars? Otherwise, you can use translateVarName.m']);
-                    else
-                        atomdataVals = [adVars.(cicVar)];
+                    assert(isfield(advars,cicVar),['The variable ' cicVar ' is not a variable stored in atomdata.  Maybe you want to specify it as a noncicero variable in ncVars? Otherwise, you can use translateVarName.m']);
+                    atomdataVals = [adVars.(cicVar)];
 
-                        tol = 10^(-3);
-                        satisAD = false(size(atomdataVals));
-                        for ii=1:length(desiredVals)
-                            if desiredVals(ii)<10^(-8)
-                                if mean(atomdataVals)<10^(-8)
-                                    satisThisVal = true(size(atomdataVals));
-                                else
-                                    satisThisVal = abs(atomdataVals-desiredVals(ii))./mean(atomdataVals)<tol;
-                                end
+                    tol = 10^(-3);
+                    satisAD = false(size(atomdataVals));
+                    for ii=1:length(desiredVals)
+                        if desiredVals(ii)<10^(-8)
+                            if mean(atomdataVals)<10^(-8)
+                                satisThisVal = true(size(atomdataVals));
                             else
-                                satisThisVal = abs(atomdataVals-desiredVals(ii))./desiredVals(ii)<tol;
+                                satisThisVal = abs(atomdataVals-desiredVals(ii))./mean(atomdataVals)<tol;
                             end
-                            satisAD = satisAD|satisThisVal;
+                        else
+                            satisThisVal = abs(atomdataVals-desiredVals(ii))./desiredVals(ii)<tol;
                         end
+                        satisAD = satisAD|satisThisVal;
                     end
                 end
+                    
                 if all(~satisAD)
                     warning(['No atomdata was found to fit the variable values given in the run info for ', runInfo.RunID,' KILLED BY VARIABLE ',var])
                     obj.Atomdata=atomdata(satisAD);
@@ -115,8 +113,6 @@ classdef RunData<RunInfoSubset
                 %Shortening atomdata to only the ones that satisfy the
                 %conditions
                 atomdata = atomdata(satisAD);
-                
-                
                 
                 if any(~satisAD)
                     % Update GeneratingConditions in case it turns out that
