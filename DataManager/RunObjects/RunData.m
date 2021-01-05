@@ -80,7 +80,7 @@ classdef RunData<RunInfoSubset
                     % not present in subset of RunDatas. To revert: remove
                     % if/else statment, replace warning with
                     % assert(isfield(advars,cicVar),'error message').
-                    assert(isfield(advars,cicVar),['The variable ' cicVar ' is not a variable stored in atomdata.  Maybe you want to specify it as a noncicero variable in ncVars? Otherwise, you can use translateVarName.m']);
+                    assert(isfield(adVars,cicVar),['The variable ' cicVar ' is not a variable stored in atomdata.  Maybe you want to specify it as a noncicero variable in ncVars? Otherwise, you can use translateVarName.m']);
                     atomdataVals = [adVars.(cicVar)];
 
                     tol = 10^(-3);
