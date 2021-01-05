@@ -76,6 +76,10 @@ classdef RunData<RunInfoSubset
                     desiredVals = runInfo.vars.(var);
         
                     adVars = [atomdata.vars];
+                    % Changed on 2021/01/05 to ignore cases where cicVar
+                    % not present in subset of RunDatas. To revert: remove
+                    % if/else statment, replace warning with
+                    % assert(isfield(advars,cicVar),'error message').
                     if ~isfield(adVars,cicVar)
                         warning(['The variable ' cicVar ' is not a variable stored in atomdata.  Maybe you want to specify it as a noncicero variable in ncVars? Otherwise, you can use translateVarName.m']);
                     else
