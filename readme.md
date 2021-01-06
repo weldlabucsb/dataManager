@@ -22,7 +22,7 @@ To make your life easier dealing with RunData objects, see [the DataAnalysis rep
 ## About DataManager
 DataManager includes a number of classes which make dealing with atomdatas much less painful. Their structure, discussed in the previous section, should be enough to get you started once you have a RunDataLibrary to work with.
 
-It is highly recommended that when starting out, you use the autoLibGen app to generate your RunDataLibrary. However, you can do generate a RunDataLibrary with more control by utilizing the RunDataLibrary's construct methods.
+It is highly recommended that when starting out, you use the autoLibGen app to generate your RunDataLibrary. However, you can generate a RunDataLibrary with more control by utilizing the RunDataLibrary's construct methods.
 
 The first thing you need is a runInfoTable. This is a csv which contains rows of information about the run folders (on the Citadel, where the atomdatas are located) and a few other things. You can get fancy here and add all sorts of columns, but the basic set is:
     - Year
