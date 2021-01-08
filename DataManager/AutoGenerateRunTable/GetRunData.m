@@ -29,6 +29,7 @@ arguments
     options.excludeVars = {'IterationCount','IterationNum','ImageTime','LogTime','PiezoModFreq'};
     options.OpenOutputFolder (1,1) logical = 1
     options.DefaultOutputDir string = "G:\My Drive\_WeldLab\Code\Analysis\_DataAnalysis\_data_loading\Data"
+    options.OutputDir string = ""
 end
 
 % choose default output dir (only has effect if GetRunData run w/o first argument
@@ -65,6 +66,10 @@ elseif isempty(varargin)
        return
     end
     infoTablePath = fullfile(output_dir,infoTableName);
+end
+
+if options.OutputDir ~= ""
+    output_dir = options.OutputDir;
 end
 
 % by default, .mat is saved at location of csv
