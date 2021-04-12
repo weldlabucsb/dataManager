@@ -89,8 +89,14 @@ Data = Data.autoConstruct(...
     options.includeVars,...
     options.excludeVars);
 
+d = whos('Data'); d = d.bytes / 1e9;
+
 % save the data
-save(data_output_path,'Data');
+if d < 2
+    save(data_output_path,'Data');
+elseif d >= 2
+    save(data_output_path,'Data','-v7.3');
+end
 
 if options.OpenOutputFolder
     if(ispc)
